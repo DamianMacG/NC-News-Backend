@@ -36,28 +36,15 @@ describe("GET /api/topics", () => {
   });
 });
 
-const generateEndpointObject = () => {
-  const endpoints = require("../endpoints.json");
-  const expectedResponse = {};
-
-  for (const endpoint in endpoints) {
-    expectedResponse[endpoint] = {
-      ...endpoints[endpoint],
-    };
-  }
-
-  return expectedResponse;
-};
 
 describe("GET /api", () => {
   test("200 should respond with a JSON object of available endpoints", () => {
-    const expectedResponse = generateEndpointObject();
-
+    const endpoints = require("../endpoints.json");
     return request(app)
       .get("/api")
       .expect(200)
       .then(({ body }) => {
-        expect(body).toEqual(expectedResponse);
+        expect(body.endpoints).toEqual(endpoints);
       });
   });
 });
