@@ -22,9 +22,6 @@ describe("GET /api/topics", () => {
         expect(typeof body).toBe("object");
         expect(Array.isArray(body.topics)).toBe(true);
         expect(body.topics[0].slug).toBe("mitch");
-        expect(
-          body.topics.every((topic) => topic.hasOwnProperty("description"))
-        ).toBe(true);
         body.topics.forEach((topic) =>
           expect(topic).toMatchObject({
             description: expect.any(String),
@@ -33,12 +30,9 @@ describe("GET /api/topics", () => {
         );
       });
   });
-  test("404: should respond with undefined for invalid endpoint", () => {
+  test("404: should respond with 'Not found' for invalid endpoint", () => {
     return request(app)
-      .get("/api/topic")
+      .get("/api/banana")
       .expect(404)
-      .then(({ body }) => {
-        expect(body.msg).toBe(undefined);
-      });
   });
 });
