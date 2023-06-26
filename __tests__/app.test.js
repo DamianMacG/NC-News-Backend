@@ -3,6 +3,7 @@ const app = require("../app");
 const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const data = require("../db/data/test-data/index");
+const { getEndpoints } = require("../controllers/api.controller");
 
 afterAll(() => {
   db.end();
@@ -31,8 +32,19 @@ describe("GET /api/topics", () => {
       });
   });
   test("404: should respond with 'Not found' for invalid endpoint", () => {
+    return request(app).get("/api/banana").expect(404);
+  });
+});
+
+
+describe("GET /api", () => {
+  test("200 should respond with a JSON object of available endpoints", () => {
+    const endpoints = require("../endpoints.json");
     return request(app)
-      .get("/api/banana")
-      .expect(404)
+      .get("/api")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.endpoints).toEqual(endpoints);
+      });
   });
 });
