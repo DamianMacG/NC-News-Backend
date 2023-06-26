@@ -1,5 +1,7 @@
 exports.handleBadPaths = (err, req, res, next) => {
+  if (err.code) {
     res.status(404).send({ msg: "Not found" });
+  } else next(err);
 };
 
 exports.handlePsqlErrors = (err, req, res, next) => {
