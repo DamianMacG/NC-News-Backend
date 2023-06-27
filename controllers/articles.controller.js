@@ -1,4 +1,8 @@
-const { getArticlesById, getAllArticles } = require("../models/articles.models");
+const {
+  getArticlesById,
+  getAllArticles,
+  getAllArticleIdComments,
+} = require("../models/articles.models");
 
 exports.getArticleById = (req, res, next) => {
   const { article_id } = req.params;
@@ -7,16 +11,26 @@ exports.getArticleById = (req, res, next) => {
     .then((article) => {
       res.status(200).send({ article });
     })
-    .catch((err) => {
-      next(err);
-    });
+    .catch(next);
 };
 
 exports.getArticles = (req, res, next) => {
   getAllArticles()
     .then((articles) => res.status(200).send({ articles }))
-    .catch((err) => {
-      next(err);
-    });
+    .catch(next);
 };
 
+exports.getArticleIdComments = (req, res, next) => {
+  const { article_id } = req.params;
+
+  const promises = [getAllArticleIdComments(article_id)];
+  if (article_id) {
+    promises.push(getArticlesById(article_id));
+  }
+  Promise.all(promises)
+    .then((resolvedPromises) => {
+      const comments = resolvedPromises[0];
+      res.status(200).send({ comments });
+    })
+    .catch(next);
+};
