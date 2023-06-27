@@ -1,4 +1,4 @@
-const { getArticlesById } = require("../models/articles.model");
+const { getArticlesById } = require("../models/articles.models");
 
 exports.getArticleById = (req, res, next) => {
   const { article_id } = req.params;
