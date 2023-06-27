@@ -36,7 +36,6 @@ describe("GET /api/topics", () => {
   });
 });
 
-
 describe("GET /api", () => {
   test("200 should respond with a JSON object of available endpoints", () => {
     const endpoints = require("../endpoints.json");
@@ -48,3 +47,23 @@ describe("GET /api", () => {
       });
   });
 });
+
+// describe("GET /api/articles", () => {
+//   test("200: should return an array or article objects", () => {
+//     return request(app)
+//       .get("/api/articles")
+//       .expect(200)
+//       .then(({ body }) => {
+//         expect(body.articles.length).toBe(13);
+//         // expect(typeof body).toBe("object");
+//         // expect(Array.isArray(body.topics)).toBe(true);
+//         // expect(body.topics[0].slug).toBe("mitch");
+//         // body.topics.forEach((topic) =>
+//         //   expect(topic).toMatchObject({
+//         //     description: expect.any(String),
+//         //     slug: expect.any(String),
+//         //   })
+//         // );
+//       });
+//   });
+// });

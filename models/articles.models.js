@@ -10,3 +10,9 @@ exports.getArticlesById = (article_id) => {
       return result.rows[0];
     });
 };
+
+exports.getAllArticles = () => {
+  return db.query("SELECT * FROM articles").then((result) => {
+    return result.rows;
+  });
+};
