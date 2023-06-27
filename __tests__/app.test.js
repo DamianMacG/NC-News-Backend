@@ -146,6 +146,7 @@ describe("GET /api/articles/:article_id/comments", () => {
       .get("/api/articles/3/comments")
       .expect(200)
       .then(({ body }) => {
+        expect(body.comments.length).toBe(2);
         expect(Array.isArray(body.comments)).toBe(true);
         body.comments.forEach((comment) =>
           expect(comment).toMatchObject({
@@ -157,7 +158,7 @@ describe("GET /api/articles/:article_id/comments", () => {
             article_id: expect.any(Number),
           })
         );
-        expect(body.comments[0]).toEqual(
+        expect(body.comments).toEqual([
           {
             comment_id: 11,
             body: "Ambidextrous marsupial",
@@ -173,16 +174,32 @@ describe("GET /api/articles/:article_id/comments", () => {
             author: "icellusedkars",
             votes: 0,
             created_at: "2020-06-20T07:24:00.000Z",
-          }
-        );
+          },
+        ]);
       });
   });
-  test("404: should respond with error message if article id does not exist", () => {
+  test("200: should return an empty array if article id exists but has no comments", () => {
     return request(app)
-      .get("/api/articles/999/comments")
-      .expect(404)
+      .get("/api/articles/2/comments")
+      .expect(200)
       .then(({ body }) => {
-        expect(body).toEqual({ msg: "Article not found" });
+        expect(body.comments).toEqual([]);
       });
   });
+});
+test("404: should respond with error message if article id does not exist", () => {
+  return request(app)
+    .get("/api/articles/999/comments")
+    .expect(404)
+    .then(({ body }) => {
+      expect(body).toEqual({ msg: "Article not found" });
+    });
+});
+test("400 should respond with an error message for an invalid ID endpoint", () => {
+  return request(app)
+    .get("/api/articles/hello/comments")
+    .expect(400)
+    .then(({ body }) => {
+      expect(body).toEqual({ msg: "Bad request" });
+    });
 });

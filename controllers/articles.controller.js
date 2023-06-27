@@ -22,7 +22,16 @@ exports.getArticles = (req, res, next) => {
 
 exports.getArticleIdComments = (req, res, next) => {
   const { article_id } = req.params;
-  getAllArticleIdComments(article_id)
-    .then((comments) => res.status(200).send({ comments }))
+
+  const promises = [getAllArticleIdComments(article_id)];
+  if (article_id) {
+    promises.push(getArticlesById(article_id));
+  }
+  Promise.all(promises)
+    .then((resolvedPromises) => {
+      const comments = resolvedPromises[0];
+      console.log(comments)
+      res.status(200).send({ comments });
+    })
     .catch(next);
 };
