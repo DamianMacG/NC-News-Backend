@@ -8,7 +8,6 @@ const {
   handleCustomErrors,
   handleServerErrors,
 } = require("./errors/errors");
-const { getArticlesById } = require("./models/articles.models");
 
 const app = express();
 
