@@ -103,3 +103,39 @@ describe("GET /api/articles/:article_id", () => {
       });
   });
 });
+
+describe("GET /api/articles", () => {
+  test("200: should return an array or article objects (with body property) in descending order by created_at", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles.length).toBe(13);
+        expect(typeof body).toBe("object");
+        expect(Array.isArray(body.articles)).toBe(true);
+        body.articles.forEach((article) =>
+          expect(article).toMatchObject({
+            article_id: expect.any(Number),
+            title: expect.any(String),
+            topic: expect.any(String),
+            author: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+            comment_count: expect.any(Number),
+          })
+        );
+        expect(body.articles[12]).toEqual({
+          article_id: 7,
+          title: "Z",
+          author: "icellusedkars",
+          topic: "mitch",
+          created_at: "2020-01-07T14:08:00.000Z",
+          votes: 0,
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+          comment_count: 0,
+        });
+      });
+  });
+});
