@@ -140,56 +140,119 @@ describe("GET /api/articles", () => {
   });
 });
 
-// describe("POST /api/articles/:article_id/comments", () => {
-//   test("201: should add a comment for a valid article ID", () => {
-//     const newComment = {
-//       username: "Damian The King",
-//       body: "The cutest man in all of the land!",
-//     };
+describe("GET /api/articles/:article_id/comments", () => {
+  test("200: should respond with an array of comments for the article_id", () => {
+    return request(app)
+      .get("/api/articles/3/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments.length).toBe(2);
+        expect(Array.isArray(body.comments)).toBe(true);
+        body.comments.forEach((comment) =>
+          expect(comment).toMatchObject({
+            comment_id: expect.any(Number),
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+            author: expect.any(String),
+            body: expect.any(String),
+            article_id: expect.any(Number),
+          })
+        );
+        expect(body.comments).toEqual([
+          {
+            comment_id: 11,
+            body: "Ambidextrous marsupial",
+            article_id: 3,
+            author: "icellusedkars",
+            votes: 0,
+            created_at: "2020-09-19T23:10:00.000Z",
+          },
+          {
+            comment_id: 10,
+            body: "git push origin master",
+            article_id: 3,
+            author: "icellusedkars",
+            votes: 0,
+            created_at: "2020-06-20T07:24:00.000Z",
+          },
+        ]);
+      });
+  });
+  test("200: should return an empty array if article id exists but has no comments", () => {
+    return request(app)
+      .get("/api/articles/2/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments).toEqual([]);
+      });
+  });
+});
+test("404: should respond with error message if article id does not exist", () => {
+  return request(app)
+    .get("/api/articles/999/comments")
+    .expect(404)
+    .then(({ body }) => {
+      expect(body).toEqual({ msg: "Article not found" });
+    });
+});
+test("400 should respond with an error message for an invalid ID endpoint", () => {
+  return request(app)
+    .get("/api/articles/hello/comments")
+    .expect(400)
+    .then(({ body }) => {
+      expect(body).toEqual({ msg: "Bad request" });
+    });
+});
 
-//     return request(app)
-//       .post("/api/articles/1/comments")
-//       .send(newComment)
-//       .expect(201)
-//       .then(({ body }) => {
-//         expect(body.comment).toHaveProperty("comment_id");
-//         expect(body.comment).toHaveProperty("article_id");
-//         expect(body.comment).toHaveProperty("username", newComment.username);
-//         expect(body.comment).toHaveProperty("body", newComment.body);
-//         expect(body.comment).toHaveProperty("created_at");
-//         expect(body.comment).toHaveProperty("votes", 0);
-//       });
-//   });
-// });
+describe("POST /api/articles/:article_id/comments", () => {
+  test("201: should add a comment for a valid article ID", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "The cutest man in all of the land!",
+    };
 
-//   test("404: should respond with an error message for a non-existent article ID", () => {
-//     const newComment = {
-//       username: "Eric Cantona",
-//       body: "All about the French!",
-//     };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.comment).toMatchObject(  {
+          comment_id: 19,
+          body: 'The cutest man in all of the land!',
+          article_id: 1,
+          author: 'butter_bridge',
+          votes: 0,
+          created_at: expect.any(String),
+        })
+      });
+  });
+  test("404: should respond with an error message for a non-existent article ID", () => {
+    const newComment = {
+      username: "Eric Cantona",
+      body: "All about the French!",
+    };
 
-//     return request(app)
-//       .post("/api/articles/999/comments")
-//       .send(newComment)
-//       .expect(404)
-//       .then(({ body }) => {
-//         expect(body).toEqual({ msg: "Article not found" });
-//       });
-//   });
+    return request(app)
+      .post("/api/articles/999/comments")
+      .send(newComment)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "Article not found" });
+      });
+  });
+  test("400: should respond with an error message for missing required fields", () => {
+    const newComment = {
+      username: "Frodo Baggins",
+    };
 
-//   test("400: should respond with an error message for missing required fields", () => {
-//     const newComment = {
-//       username: "Frodo Baggins",
-//     };
-
-//     return request(app)
-//       .post("/api/articles/1/comments")
-//       .send(newComment)
-//       .expect(400)
-//       .then(({ body }) => {
-//         expect(body).toEqual({
-//           msg: "Missing required fields: username, body",
-//         });
-//       });
-//   });
-// });
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toEqual({
+          msg: "Missing username or body",
+        });
+      });
+  });
+});
