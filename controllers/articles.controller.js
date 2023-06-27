@@ -1,4 +1,4 @@
-const { getArticlesById, getAllArticles } = require("../models/articles.models");
+const { getArticlesById, getAllArticles, insertComment } = require("../models/articles.models");
 
 exports.getArticleById = (req, res, next) => {
   const { article_id } = req.params;
@@ -20,3 +20,21 @@ exports.getArticles = (req, res, next) => {
     });
 };
 
+
+
+
+
+
+
+
+
+exports.postComment = (req, res, next) => {
+  const { article_id } = req.params;
+  const { username, body } = req.body;
+
+  insertComment(article_id, username, body)
+    .then((comment) => {
+      res.status(201).json({ comment });
+    })
+    .catch(next);
+};
