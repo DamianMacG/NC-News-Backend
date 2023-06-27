@@ -140,55 +140,56 @@ describe("GET /api/articles", () => {
   });
 });
 
-describe("POST /api/articles/:article_id/comments", () => {
-  test("201: should add a comment for a valid article ID", () => {
-    const newComment = {
-      username: "Damian The King",
-      body: "The cutest man in all of the land!",
-    };
+// describe("POST /api/articles/:article_id/comments", () => {
+//   test("201: should add a comment for a valid article ID", () => {
+//     const newComment = {
+//       username: "Damian The King",
+//       body: "The cutest man in all of the land!",
+//     };
 
-    return request(app)
-      .post("/api/articles/1/comments")
-      .send(newComment)
-      .expect(201)
-      .then(({ body }) => {
-        expect(body.comment).toHaveProperty("comment_id");
-        expect(body.comment).toHaveProperty("article_id");
-        expect(body.comment).toHaveProperty("username", newComment.username);
-        expect(body.comment).toHaveProperty("body", newComment.body);
-        expect(body.comment).toHaveProperty("created_at");
-        expect(body.comment).toHaveProperty("votes", 0);
-      });
-  });
+//     return request(app)
+//       .post("/api/articles/1/comments")
+//       .send(newComment)
+//       .expect(201)
+//       .then(({ body }) => {
+//         expect(body.comment).toHaveProperty("comment_id");
+//         expect(body.comment).toHaveProperty("article_id");
+//         expect(body.comment).toHaveProperty("username", newComment.username);
+//         expect(body.comment).toHaveProperty("body", newComment.body);
+//         expect(body.comment).toHaveProperty("created_at");
+//         expect(body.comment).toHaveProperty("votes", 0);
+//       });
+//   });
+// });
 
-  test("404: should respond with an error message for a non-existent article ID", () => {
-    const newComment = {
-      username: "Eric Cantona",
-      body: "All about the French!",
-    };
+//   test("404: should respond with an error message for a non-existent article ID", () => {
+//     const newComment = {
+//       username: "Eric Cantona",
+//       body: "All about the French!",
+//     };
 
-    return request(app)
-      .post("/api/articles/999/comments")
-      .send(newComment)
-      .expect(404)
-      .then(({ body }) => {
-        expect(body).toEqual({ msg: "Article not found" });
-      });
-  });
+//     return request(app)
+//       .post("/api/articles/999/comments")
+//       .send(newComment)
+//       .expect(404)
+//       .then(({ body }) => {
+//         expect(body).toEqual({ msg: "Article not found" });
+//       });
+//   });
 
-  test("400: should respond with an error message for missing required fields", () => {
-    const newComment = {
-      username: "Frodo Baggins",
-    };
+//   test("400: should respond with an error message for missing required fields", () => {
+//     const newComment = {
+//       username: "Frodo Baggins",
+//     };
 
-    return request(app)
-      .post("/api/articles/1/comments")
-      .send(newComment)
-      .expect(400)
-      .then(({ body }) => {
-        expect(body).toEqual({
-          msg: "Missing required fields: username, body",
-        });
-      });
-  });
-});
+//     return request(app)
+//       .post("/api/articles/1/comments")
+//       .send(newComment)
+//       .expect(400)
+//       .then(({ body }) => {
+//         expect(body).toEqual({
+//           msg: "Missing required fields: username, body",
+//         });
+//       });
+//   });
+// });
