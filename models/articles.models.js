@@ -38,8 +38,27 @@ exports.getAllArticleIdComments = (article_id) => {
     )
     .then((result) => {
       if (result.rows.includes(article_id)) {
-        return [] 
-      } 
+        return [];
+      }
       return result.rows;
+    });
+};
+
+exports.updateArticleVotes = (article_id, inc_votes) => {
+  return db
+    .query(
+      `
+      UPDATE articles
+      SET votes = (votes + $2)
+      WHERE article_id = $1
+      RETURNING *
+    `,
+      [article_id, inc_votes]
+    )
+    .then((result) => {
+      if (!result.rows.length) {
+        return Promise.reject({ status: 404, msg: "Article not found" });
+      }
+      return result.rows[0];
     });
 };

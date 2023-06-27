@@ -2,6 +2,7 @@ const {
   getArticlesById,
   getAllArticles,
   getAllArticleIdComments,
+  updateArticleVotes,
 } = require("../models/articles.models");
 
 exports.getArticleById = (req, res, next) => {
@@ -31,6 +32,21 @@ exports.getArticleIdComments = (req, res, next) => {
     .then((resolvedPromises) => {
       const comments = resolvedPromises[0];
       res.status(200).send({ comments });
+    })
+    .catch(next);
+};
+
+exports.updateArticle = (req, res, next) => {
+  const { article_id } = req.params;
+  const { inc_votes } = req.body;
+
+  if (typeof inc_votes !== "number") {
+    return next({ status: 400, msg: "Invalid vote increment value" });
+  }
+
+  updateArticleVotes(article_id, inc_votes)
+    .then((article) => {
+      res.status(200).send({ article });
     })
     .catch(next);
 };

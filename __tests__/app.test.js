@@ -203,3 +203,48 @@ test("400 should respond with an error message for an invalid ID endpoint", () =
       expect(body).toEqual({ msg: "Bad request" });
     });
 });
+
+describe("PATCH /api/articles/:article_id", () => {
+  test("200: should update the votes property of an article", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send({ inc_votes: 10 })
+      .expect(200)
+      .then(({ body }) => {
+        console.log(body)
+        expect(body.article).toHaveProperty("article_id", 1);
+        expect(body.article).toHaveProperty("votes", 110);
+      });
+  });
+
+  test("200: should decrement the votes property of an article", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send({ inc_votes: -10 })
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article).toHaveProperty("article_id", 1);
+        expect(body.article).toHaveProperty("votes", 90);
+      });
+  });
+
+  test("400: should respond with an error message for an invalid vote increment value", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send({ inc_votes: "invalid" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "Invalid vote increment value" });
+      });
+  });
+
+  test("404: should respond with an error message for a non-existent article ID", () => {
+    return request(app)
+      .patch("/api/articles/999")
+      .send({ inc_votes: 10 })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "Article not found" });
+      });
+  });
+});
