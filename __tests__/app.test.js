@@ -139,3 +139,50 @@ describe("GET /api/articles", () => {
       });
   });
 });
+
+describe("GET /api/articles/:article_id/comments", () => {
+  test("200: should respond with an array of comments for the article_id", () => {
+    return request(app)
+      .get("/api/articles/3/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(Array.isArray(body.comments)).toBe(true);
+        body.comments.forEach((comment) =>
+          expect(comment).toMatchObject({
+            comment_id: expect.any(Number),
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+            author: expect.any(String),
+            body: expect.any(String),
+            article_id: expect.any(Number),
+          })
+        );
+        expect(body.comments[0]).toEqual(
+          {
+            comment_id: 11,
+            body: "Ambidextrous marsupial",
+            article_id: 3,
+            author: "icellusedkars",
+            votes: 0,
+            created_at: "2020-09-19T23:10:00.000Z",
+          },
+          {
+            comment_id: 10,
+            body: "git push origin master",
+            article_id: 3,
+            author: "icellusedkars",
+            votes: 0,
+            created_at: "2020-06-20T07:24:00.000Z",
+          }
+        );
+      });
+  });
+  test("404: should respond with error message if article id does not exist", () => {
+    return request(app)
+      .get("/api/articles/999/comments")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "Article not found" });
+      });
+  });
+});
