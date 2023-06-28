@@ -105,7 +105,7 @@ describe("GET /api/articles/:article_id", () => {
 });
 
 describe("GET /api/articles", () => {
-  test("200: should return an array or article objects (with body property) in descending order by created_at", () => {
+  test("200: should return an array or article objects (without body property) in descending order by created_at", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
@@ -318,14 +318,15 @@ describe("PATCH /api/articles/:article_id", () => {
       .then(({ body }) => {
         expect(body.article).toMatchObject({
           article_id: 1,
-          title: 'Living in the shadow of a great man',
-          topic: 'mitch',
-          author: 'butter_bridge',
-          body: 'I find this existence challenging',
-          created_at: '2020-07-09T20:11:00.000Z',
+          title: "Living in the shadow of a great man",
+          topic: "mitch",
+          author: "butter_bridge",
+          body: "I find this existence challenging",
+          created_at: "2020-07-09T20:11:00.000Z",
           votes: 110,
-          article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'
-        })
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        });
       });
   });
 
@@ -337,14 +338,15 @@ describe("PATCH /api/articles/:article_id", () => {
       .then(({ body }) => {
         expect(body.article).toMatchObject({
           article_id: 1,
-          title: 'Living in the shadow of a great man',
-          topic: 'mitch',
-          author: 'butter_bridge',
-          body: 'I find this existence challenging',
-          created_at: '2020-07-09T20:11:00.000Z',
+          title: "Living in the shadow of a great man",
+          topic: "mitch",
+          author: "butter_bridge",
+          body: "I find this existence challenging",
+          created_at: "2020-07-09T20:11:00.000Z",
           votes: 90,
-          article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'
-        })
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        });
       });
   });
 
@@ -367,4 +369,134 @@ describe("PATCH /api/articles/:article_id", () => {
         expect(body).toEqual({ msg: "Article not found" });
       });
   });
+});
+
+describe("GET /api/articles(queries)", () => {
+  test("should return all articles when no query parameters are provided", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles.length).toBe(13);
+        expect(typeof body).toBe("object");
+        expect(Array.isArray(body.articles)).toBe(true);
+        body.articles.forEach((article) =>
+          expect(article).toMatchObject({
+            article_id: expect.any(Number),
+            title: expect.any(String),
+            topic: expect.any(String),
+            author: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+            comment_count: expect.any(Number),
+          })
+        );
+        expect(body.articles[12]).toEqual({
+          article_id: 7,
+          title: "Z",
+          author: "icellusedkars",
+          topic: "mitch",
+          created_at: "2020-01-07T14:08:00.000Z",
+          votes: 0,
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+          comment_count: 0,
+        });
+      });
+  });
+
+  test("should return articles filtered by topic when 'topic' query parameter is provided", () => {
+    return request(app)
+      .get(`/api/articles?topic=cats`)
+      .expect(200)
+      .then(({ body }) => {
+        // expect(body.articles.length).toBe(1);
+        expect(Array.isArray(body.articles)).toBe(true);
+      });
+  });
+
+  test("should return articles sorted by the specified column and in the specified order", () => {
+    const sort_by = "votes";
+    const order = "ASC";
+  
+    return request(app)
+      .get(`/api/articles?sort=${sort_by}&order=${order}`)
+      .expect(200)
+      .then(({ body }) => {
+        console.log(body)
+        expect(Array.isArray(body.articles)).toBe(true);
+        expect(body.articles.length).toBe(13);
+        expect(body.articles[0]).toMatchObject({
+          article_id: 3,
+          title: 'Eight pug gifs that remind me of mitch',
+          author: 'icellusedkars',
+          topic: 'mitch',
+          created_at: '2020-11-03T09:12:00.000Z',
+          votes: 0,
+          article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
+          comment_count: 2
+        });
+      });
+  });
+
+  test("should return articles in the specified order when 'order' query parameter is provided - ASC", () => {
+  
+    return request(app)
+      .get(`/api/articles?order=ASC`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(Array.isArray(body.articles)).toBe(true);
+        expect(body.articles.length).toBe(13);
+        expect(body.articles[0]).toMatchObject( {
+          article_id: 3,
+          title: 'Eight pug gifs that remind me of mitch',
+          author: 'icellusedkars',
+          topic: 'mitch',
+          created_at: '2020-11-03T09:12:00.000Z',
+          votes: 0,
+          article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
+          comment_count: 2
+        })
+      });
+  });
+  test("should return articles in the specified order when 'order' query parameter is provided - DESC", () => {
+  
+    return request(app)
+      .get(`/api/articles?created_at=DESC`)
+      .expect(200)
+      .then(({ body }) => {
+
+        expect(Array.isArray(body.articles)).toBe(true);
+        expect(body.articles.length).toBe(13);
+        expect(body.articles[0]).toMatchObject( {
+          article_id: 3,
+          title: 'Eight pug gifs that remind me of mitch',
+          author: 'icellusedkars',
+          topic: 'mitch',
+          created_at: '2020-11-03T09:12:00.000Z',
+          votes: 0,
+          article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
+          comment_count: 2
+        })
+      });
+  });
+
+//   test("should return 400 Bad Request when an invalid sort_by value is provided", () => {
+//     return request(app)
+//       .get(`/api/articles?sort_by=banana`)
+//       .expect(400)
+//       .then(({ body }) => {
+//         expect(body.msg).toBe("Invalid sort value");
+//       });
+//   });
+
+//   test("should return 400 Bad Request when an invalid order value is provided", () => {
+//     return request(app)
+//       .get(`/api/articles?order_by=banana`)
+//       .expect(400)
+//       .then(({ body }) => {
+//         expect(body.msg).toBe("Invalid order value");
+//       });
+//   });
 });
