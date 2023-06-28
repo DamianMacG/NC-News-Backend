@@ -59,7 +59,6 @@ exports.insertComment = (article_id, username, body) => {
       .query("SELECT * FROM users WHERE username = $1", [username])
       .then((result) => {
         if (!result.rows.length) {
-          console.log(result.rows)
           return Promise.reject({ status: 404, msg: "Username not found" });
         }
       });
