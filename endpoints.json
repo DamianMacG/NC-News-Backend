@@ -77,6 +77,9 @@
   "PATCH /api/articles/:article_id": {
     "description": "update an article by article_id",
     "queries": [],
+    "exampleRequest": {
+      "inc_votes": 10
+    },
     "exampleResponse": {
       "article": {
         "article_id": 1,
