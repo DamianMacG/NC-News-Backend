@@ -6,6 +6,7 @@ const {
   getArticleById,
   getArticleIdComments,
   postComment,
+  updateArticle,
 } = require("./controllers/articles.controller");
 
 const {
@@ -24,6 +25,7 @@ app.get("/api/articles/:article_id", getArticleById);
 app.get("/api/articles/:article_id/comments", getArticleIdComments);
 app.post("/api/articles/:article_id/comments", postComment);
 
+app.patch("/api/articles/:article_id", updateArticle);
 
 app.all("*", (_, res) => {
   res.status(404).send({ msg: "Not found" });
