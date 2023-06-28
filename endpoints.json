@@ -92,5 +92,23 @@
         "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
       }
     }
+  },
+  "GET /api/users": {
+    "description": "get all users",
+    "queries": [],
+    "exampleResponse": {
+      "users": [
+        {
+          "username": "butter_bridge",
+          "name": "Jonny",
+          "avatar_url": "https://www.example.com/avatar.png"
+        },
+        {
+          "username": "grumpy19",
+          "name": "John",
+          "avatar_url": "https://www.example.com/avatar.png"
+        }
+      ]
+    }
   }
 }

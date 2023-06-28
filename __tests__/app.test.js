@@ -318,14 +318,15 @@ describe("PATCH /api/articles/:article_id", () => {
       .then(({ body }) => {
         expect(body.article).toMatchObject({
           article_id: 1,
-          title: 'Living in the shadow of a great man',
-          topic: 'mitch',
-          author: 'butter_bridge',
-          body: 'I find this existence challenging',
-          created_at: '2020-07-09T20:11:00.000Z',
+          title: "Living in the shadow of a great man",
+          topic: "mitch",
+          author: "butter_bridge",
+          body: "I find this existence challenging",
+          created_at: "2020-07-09T20:11:00.000Z",
           votes: 110,
-          article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'
-        })
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        });
       });
   });
 
@@ -337,14 +338,15 @@ describe("PATCH /api/articles/:article_id", () => {
       .then(({ body }) => {
         expect(body.article).toMatchObject({
           article_id: 1,
-          title: 'Living in the shadow of a great man',
-          topic: 'mitch',
-          author: 'butter_bridge',
-          body: 'I find this existence challenging',
-          created_at: '2020-07-09T20:11:00.000Z',
+          title: "Living in the shadow of a great man",
+          topic: "mitch",
+          author: "butter_bridge",
+          body: "I find this existence challenging",
+          created_at: "2020-07-09T20:11:00.000Z",
           votes: 90,
-          article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'
-        })
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        });
       });
   });
 
@@ -366,5 +368,34 @@ describe("PATCH /api/articles/:article_id", () => {
       .then(({ body }) => {
         expect(body).toEqual({ msg: "Article not found" });
       });
+  });
+});
+
+describe("GET /api/users", () => {
+  test("200: should respond with an array of user objects", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.users.length).toBe(4);
+        expect(Array.isArray(body.users)).toBe(true);
+        body.users.forEach((user) => {
+          expect(user).toMatchObject({
+            username: expect.any(String),
+            name: expect.any(String),
+            avatar_url: expect.any(String),
+          });
+        });
+        expect(body.users[0]).toEqual({
+          username: "butter_bridge",
+          name: "jonny",
+          avatar_url:
+            "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
+        });
+      });
+  });
+
+  test("404: should respond with 'Not found' for invalid endpoint", () => {
+    return request(app).get("/api/users/banana").expect(404);
   });
 });

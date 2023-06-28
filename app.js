@@ -8,6 +8,7 @@ const {
   postComment,
   updateArticle,
 } = require("./controllers/articles.controller");
+const { getAllUsers } = require("./controllers/users.controller");
 
 const {
   handleCustomErrors,
@@ -27,6 +28,8 @@ app.post("/api/articles/:article_id/comments", postComment);
 
 app.patch("/api/articles/:article_id", updateArticle);
 
+app.get("/api/users", getAllUsers);
+
 app.all("*", (_, res) => {
   res.status(404).send({ msg: "Not found" });
 });
@@ -34,6 +37,5 @@ app.all("*", (_, res) => {
 app.use(handlePsqlErrors);
 app.use(handleCustomErrors);
 app.use(handleServerErrors);
-
 
 module.exports = app;
