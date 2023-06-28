@@ -226,9 +226,34 @@ describe("POST /api/articles/:article_id/comments", () => {
         })
       });
   });
+  test("201: should add a comment for a valid article ID and ignore extra property inputs", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "The cutest man in all of the land!",
+      votes: 100,
+    };
+
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.comment).toMatchObject(  {
+          comment_id: 19,
+          body: 'The cutest man in all of the land!',
+          article_id: 1,
+          author: 'butter_bridge',
+          votes: 0,
+          created_at: expect.any(String),
+        })
+      });
+  });
+
+
+
   test("404: should respond with an error message for a non-existent article ID", () => {
     const newComment = {
-      username: "Eric Cantona",
+      username: "butter_bridge",
       body: "All about the French!",
     };
 
@@ -238,6 +263,37 @@ describe("POST /api/articles/:article_id/comments", () => {
       .expect(404)
       .then(({ body }) => {
         expect(body).toEqual({ msg: "Article not found" });
+      });
+  });
+  test("400: should respond with an error message for a non-existent username", () => {
+    const newComment = {
+      username: "Beyonce",
+      body: "All the single ladies",
+    };
+
+    return request(app)
+      .post("/api/articles/2/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "Bad request" });
+      });
+  });
+
+
+
+  test("400: should respond with an error message for an invalid ID", () => {
+    const newComment = {
+      username: "Eric Cantona",
+      body: "All about the French!",
+    };
+
+    return request(app)
+      .post("/api/articles/bananas/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "Bad request" });
       });
   });
   test("400: should respond with an error message for missing required fields", () => {
