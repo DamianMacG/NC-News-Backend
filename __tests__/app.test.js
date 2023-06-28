@@ -308,3 +308,22 @@ describe("POST /api/articles/:article_id/comments", () => {
       });
   });
 });
+
+// describe("DELETE /api/comments/:comment_id", () => {
+//   test("204: should delete the specified comment from the database and respond with 204 No Content", () => {
+//     return request(app)
+//       .delete(`/api/comments/1`)
+//       .expect(204)
+//       .then(() => {
+//         return request(app)
+//           .get("/api/restaurants")
+//           .expect(200)
+//           .then(({ body }) => {
+//             const deletedComment = body.comments.find(
+//               (comment) => comment.comment_id === 1
+//             );
+//             expect(deletedComment).toBeUndefined();
+//           });
+//       });
+//   });
+// });
