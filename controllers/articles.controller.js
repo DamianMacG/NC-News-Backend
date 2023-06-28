@@ -4,6 +4,7 @@ const {
   getAllArticleIdComments,
   insertComment,
   checkUsernameExists,
+  updateArticleVotes
 } = require("../models/articles.models");
 
 exports.getArticleById = (req, res, next) => {
@@ -49,9 +50,6 @@ exports.postComment = (req, res, next) => {
   if (article_id) {
     promises.push(getArticlesById(article_id));
   }
-  if (body) {
-    promises.push(insertComment(article_id, username, body));
-  }
   Promise.all(promises)
     .then(() => {
       insertComment(article_id, username, body).then((comment) => {
@@ -59,5 +57,20 @@ exports.postComment = (req, res, next) => {
       });
     })
 
+    .catch(next);
+};
+
+exports.updateArticle = (req, res, next) => {
+  const { article_id } = req.params;
+  const { inc_votes } = req.body;
+
+  if (typeof inc_votes !== "number") {
+    return next({ status: 400, msg: "Invalid vote increment value" });
+  }
+
+  updateArticleVotes(article_id, inc_votes)
+    .then((article) => {
+      res.status(200).send({ article });
+    })
     .catch(next);
 };

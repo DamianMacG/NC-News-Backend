@@ -54,12 +54,32 @@ exports.insertComment = (article_id, username, body) => {
       return result.rows[0];
     });
 };
-  exports.checkUsernameExists = (username) => {
-    return db
-      .query("SELECT * FROM users WHERE username = $1", [username])
-      .then((result) => {
-        if (!result.rows.length) {
-          return Promise.reject({ status: 404, msg: "Username not found" });
-        }
-      });
-  };
+
+exports.checkUsernameExists = (username) => {
+  return db
+    .query("SELECT * FROM users WHERE username = $1", [username])
+    .then((result) => {
+      if (!result.rows.length) {
+        return Promise.reject({ status: 404, msg: "Username not found" });
+      }
+    });
+};
+
+exports.updateArticleVotes = (article_id, inc_votes) => {
+  return db
+    .query(
+      `
+      UPDATE articles
+      SET votes = votes + $2
+      WHERE article_id = $1
+      RETURNING *
+    `,
+      [article_id, inc_votes]
+    )
+    .then((result) => {
+      if (!result.rows.length) {
+        return Promise.reject({ status: 404, msg: "Article not found" });
+      }
+      return result.rows[0];
+    });
+};
