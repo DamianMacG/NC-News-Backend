@@ -211,9 +211,16 @@ describe("PATCH /api/articles/:article_id", () => {
       .send({ inc_votes: 10 })
       .expect(200)
       .then(({ body }) => {
-        console.log(body)
-        expect(body.article).toHaveProperty("article_id", 1);
-        expect(body.article).toHaveProperty("votes", 110);
+        expect(body.article).toMatchObject({
+          article_id: 1,
+          title: 'Living in the shadow of a great man',
+          topic: 'mitch',
+          author: 'butter_bridge',
+          body: 'I find this existence challenging',
+          created_at: '2020-07-09T20:11:00.000Z',
+          votes: 110,
+          article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'
+        })
       });
   });
 
@@ -223,8 +230,16 @@ describe("PATCH /api/articles/:article_id", () => {
       .send({ inc_votes: -10 })
       .expect(200)
       .then(({ body }) => {
-        expect(body.article).toHaveProperty("article_id", 1);
-        expect(body.article).toHaveProperty("votes", 90);
+        expect(body.article).toMatchObject({
+          article_id: 1,
+          title: 'Living in the shadow of a great man',
+          topic: 'mitch',
+          author: 'butter_bridge',
+          body: 'I find this existence challenging',
+          created_at: '2020-07-09T20:11:00.000Z',
+          votes: 90,
+          article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'
+        })
       });
   });
 
