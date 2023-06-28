@@ -3,6 +3,7 @@ const {
   getAllArticles,
   getAllArticleIdComments,
   insertComment,
+  checkUsernameExists,
 } = require("../models/articles.models");
 
 exports.getArticleById = (req, res, next) => {
@@ -44,12 +45,20 @@ exports.postComment = (req, res, next) => {
     return next({ status: 400, msg: "Missing username or body" });
   }
 
-  getArticlesById(article_id)
+  const promises = [checkUsernameExists(username)];
+  if (article_id) {
+    promises.push(getArticlesById(article_id));
+  }
+  if (body) {
+    promises.push(insertComment(article_id, username, body));
+  }
+  Promise.all(promises)
     .then(() => {
-      return insertComment(article_id, username, body);
+      insertComment(article_id, username, body).then((comment) => {
+        console.log(comment);
+        res.status(201).send({ comment });
+      });
     })
-    .then((comment) => {
-      res.status(201).json({ comment });
-    })
+
     .catch(next);
 };
