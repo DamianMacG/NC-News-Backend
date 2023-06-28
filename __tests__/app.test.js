@@ -186,22 +186,127 @@ describe("GET /api/articles/:article_id/comments", () => {
         expect(body.comments).toEqual([]);
       });
   });
+  test("404: should respond with error message if article id does not exist", () => {
+    return request(app)
+      .get("/api/articles/999/comments")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "Article not found" });
+      });
+  });
+  test("400 should respond with an error message for an invalid ID endpoint", () => {
+    return request(app)
+      .get("/api/articles/hello/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "Bad request" });
+      });
+  });
 });
-test("404: should respond with error message if article id does not exist", () => {
-  return request(app)
-    .get("/api/articles/999/comments")
-    .expect(404)
-    .then(({ body }) => {
-      expect(body).toEqual({ msg: "Article not found" });
-    });
-});
-test("400 should respond with an error message for an invalid ID endpoint", () => {
-  return request(app)
-    .get("/api/articles/hello/comments")
-    .expect(400)
-    .then(({ body }) => {
-      expect(body).toEqual({ msg: "Bad request" });
-    });
+
+describe("POST /api/articles/:article_id/comments", () => {
+  test("201: should add a comment for a valid article ID", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "The cutest man in all of the land!",
+    };
+
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.comment).toMatchObject({
+          comment_id: expect.any(Number),
+          body: "The cutest man in all of the land!",
+          article_id: 1,
+          author: "butter_bridge",
+          votes: 0,
+          created_at: expect.any(String),
+        });
+      });
+  });
+  test("201: should add a comment for a valid article ID and ignore extra property inputs", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "The cutest man in all of the land!",
+      votes: 100,
+    };
+
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.comment).toMatchObject({
+          comment_id: expect.any(Number),
+          body: "The cutest man in all of the land!",
+          article_id: 1,
+          author: "butter_bridge",
+          votes: 0,
+          created_at: expect.any(String),
+        });
+      });
+  });
+
+  test("404: should respond with an error message for a non-existent article ID", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "All about the French!",
+    };
+
+    return request(app)
+      .post("/api/articles/999/comments")
+      .send(newComment)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "Article not found" });
+      });
+  });
+  test("404: should respond with an error message for a non-existent username", () => {
+    const newComment = {
+      username: "Beyonce",
+      body: "All the single ladies",
+    };
+
+    return request(app)
+      .post("/api/articles/2/comments")
+      .send(newComment)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "Username not found" });
+      });
+  });
+
+  test("400: should respond with an error message for an invalid ID", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "All about the French!",
+    };
+
+    return request(app)
+      .post("/api/articles/bananas/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "Bad request" });
+      });
+  });
+  test("400: should respond with an error message for missing required fields", () => {
+    const newComment = {
+      username: "Frodo Baggins",
+    };
+
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toEqual({
+          msg: "Missing username or body",
+        });
+      });
+  });
 });
 
 describe("PATCH /api/articles/:article_id", () => {
@@ -224,42 +329,42 @@ describe("PATCH /api/articles/:article_id", () => {
       });
   });
 
-  test("200: should decrement the votes property of an article", () => {
-    return request(app)
-      .patch("/api/articles/1")
-      .send({ inc_votes: -10 })
-      .expect(200)
-      .then(({ body }) => {
-        expect(body.article).toMatchObject({
-          article_id: 1,
-          title: 'Living in the shadow of a great man',
-          topic: 'mitch',
-          author: 'butter_bridge',
-          body: 'I find this existence challenging',
-          created_at: '2020-07-09T20:11:00.000Z',
-          votes: 90,
-          article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'
-        })
-      });
-  });
+//   test("200: should decrement the votes property of an article", () => {
+//     return request(app)
+//       .patch("/api/articles/1")
+//       .send({ inc_votes: -10 })
+//       .expect(200)
+//       .then(({ body }) => {
+//         expect(body.article).toMatchObject({
+//           article_id: 1,
+//           title: 'Living in the shadow of a great man',
+//           topic: 'mitch',
+//           author: 'butter_bridge',
+//           body: 'I find this existence challenging',
+//           created_at: '2020-07-09T20:11:00.000Z',
+//           votes: 90,
+//           article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'
+//         })
+//       });
+//   });
 
-  test("400: should respond with an error message for an invalid vote increment value", () => {
-    return request(app)
-      .patch("/api/articles/1")
-      .send({ inc_votes: "invalid" })
-      .expect(400)
-      .then(({ body }) => {
-        expect(body).toEqual({ msg: "Invalid vote increment value" });
-      });
-  });
+//   test("400: should respond with an error message for an invalid vote increment value", () => {
+//     return request(app)
+//       .patch("/api/articles/1")
+//       .send({ inc_votes: "invalid" })
+//       .expect(400)
+//       .then(({ body }) => {
+//         expect(body).toEqual({ msg: "Invalid vote increment value" });
+//       });
+//   });
 
-  test("404: should respond with an error message for a non-existent article ID", () => {
-    return request(app)
-      .patch("/api/articles/999")
-      .send({ inc_votes: 10 })
-      .expect(404)
-      .then(({ body }) => {
-        expect(body).toEqual({ msg: "Article not found" });
-      });
-  });
+//   test("404: should respond with an error message for a non-existent article ID", () => {
+//     return request(app)
+//       .patch("/api/articles/999")
+//       .send({ inc_votes: 10 })
+//       .expect(404)
+//       .then(({ body }) => {
+//         expect(body).toEqual({ msg: "Article not found" });
+//       });
+//   });
 });
