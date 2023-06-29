@@ -16,7 +16,9 @@ Clone the repository to your local machine: git clone https://github.com/DamianM
 "cd" into the project's directory and install the project dependencies: npm install
 
 To create the databases and seed the tables, please run the following commands:
+
 npm run setup-dbs
+
 npm run seed
 
 In order to connect to both databases locally (i.e. test and development) you must create 2 different env files in your root folder - env.test and env.development
@@ -29,15 +31,18 @@ These must be added to your .gitignore file.
 The minimum versions required for running the Project Name project are:
 
 Node.js: v12 or higher
+
 PostgreSQL: v10 or higher
 
 To run the application locally: 
+
 npm start
 
 The application should now be accessible at http://localhost:9090.
 
 
 # Testing:
+
 To run the project's tests:
 
 npm test
