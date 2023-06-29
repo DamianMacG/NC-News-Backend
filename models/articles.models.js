@@ -38,6 +38,7 @@ exports.getAllArticles = (topic, sort_by = "created_at", order_by = "DESC") => {
     queryValues.push(topic);
     queryString += ` WHERE articles.topic = $1`;
   }
+
   queryString += ` GROUP BY articles.article_id, articles.title, articles.author, articles.topic, articles.created_at, articles.votes, articles.article_img_url`;
   queryString += ` ORDER BY ${sort_by} ${order_by};`;
 
