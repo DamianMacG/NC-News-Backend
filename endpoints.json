@@ -99,5 +99,23 @@
         }
       }
     }
+  },
+  "GET /api/users": {
+    "description": "get all users",
+    "queries": [],
+    "exampleResponse": {
+      "users": [
+        {
+          "username": "butter_bridge",
+          "name": "Jonny",
+          "avatar_url": "https://www.example.com/avatar.png"
+        },
+        {
+          "username": "grumpy19",
+          "name": "John",
+          "avatar_url": "https://www.example.com/avatar.png"
+        }
+      ]
+    }
   }
 }

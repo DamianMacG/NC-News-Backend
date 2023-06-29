@@ -8,6 +8,9 @@ const {
   postComment,
   updateArticle,
 } = require("./controllers/articles.controller");
+
+const { getAllUsers } = require("./controllers/users.controller");
+
 const { deleteComment } = require("./controllers/comments.controller");
 
 const {
@@ -28,6 +31,8 @@ app.post("/api/articles/:article_id/comments", postComment);
 app.patch("/api/articles/:article_id", updateArticle);
 app.delete("/api/comments/:comment_id", deleteComment);
 
+
+app.get("/api/users", getAllUsers);
 
 app.all("*", (_, res) => {
   res.status(404).send({ msg: "Not found" });

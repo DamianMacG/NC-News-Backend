@@ -371,6 +371,29 @@ describe("PATCH /api/articles/:article_id", () => {
   });
 });
 
+
+describe("GET /api/users", () => {
+  test("200: should respond with an array of user objects", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.users.length).toBe(4);
+        expect(Array.isArray(body.users)).toBe(true);
+        body.users.forEach((user) => {
+          expect(user).toMatchObject({
+            username: expect.any(String),
+            name: expect.any(String),
+            avatar_url: expect.any(String),
+          });
+        });
+        expect(body.users[0]).toEqual({
+          username: "butter_bridge",
+          name: "jonny",
+          avatar_url:
+            "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
+        });
+
 describe("DELETE /api/comments/:comment_id", () => {
   test("204: should delete the given comment by comment_id", () => {
     return request(app)
