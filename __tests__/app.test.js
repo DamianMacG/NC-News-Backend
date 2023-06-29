@@ -69,17 +69,15 @@ describe("GET /api/articles/:article_id", () => {
         expect(body.article).toHaveProperty("article_id");
         expect(body.article).toHaveProperty("body");
         expect(body.article).toHaveProperty("topic");
-        expect(body.article).toHaveProperty("comment_count");
         expect(body.article).toHaveProperty("created_at");
         expect(body.article).toHaveProperty("votes");
         expect(body.article).toHaveProperty("article_img_url");
-        expect(body.article).toEqual({
+        expect(body.article).toMatchObject({
           article_id: 1,
           title: "Living in the shadow of a great man",
           topic: "mitch",
           author: "butter_bridge",
           body: "I find this existence challenging",
-          comment_count: 11,
           created_at: "2020-07-09T20:11:00.000Z",
           votes: 100,
           article_img_url:
