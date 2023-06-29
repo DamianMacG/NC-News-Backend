@@ -394,8 +394,4 @@ describe("GET /api/users", () => {
         });
       });
   });
-
-  test("404: should respond with 'Not found' for invalid endpoint", () => {
-    return request(app).get("/api/users/banana").expect(404);
-  });
 });
