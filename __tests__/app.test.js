@@ -318,14 +318,15 @@ describe("PATCH /api/articles/:article_id", () => {
       .then(({ body }) => {
         expect(body.article).toMatchObject({
           article_id: 1,
-          title: 'Living in the shadow of a great man',
-          topic: 'mitch',
-          author: 'butter_bridge',
-          body: 'I find this existence challenging',
-          created_at: '2020-07-09T20:11:00.000Z',
+          title: "Living in the shadow of a great man",
+          topic: "mitch",
+          author: "butter_bridge",
+          body: "I find this existence challenging",
+          created_at: "2020-07-09T20:11:00.000Z",
           votes: 110,
-          article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'
-        })
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        });
       });
   });
 
@@ -337,14 +338,15 @@ describe("PATCH /api/articles/:article_id", () => {
       .then(({ body }) => {
         expect(body.article).toMatchObject({
           article_id: 1,
-          title: 'Living in the shadow of a great man',
-          topic: 'mitch',
-          author: 'butter_bridge',
-          body: 'I find this existence challenging',
-          created_at: '2020-07-09T20:11:00.000Z',
+          title: "Living in the shadow of a great man",
+          topic: "mitch",
+          author: "butter_bridge",
+          body: "I find this existence challenging",
+          created_at: "2020-07-09T20:11:00.000Z",
           votes: 90,
-          article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'
-        })
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        });
       });
   });
 
@@ -365,6 +367,40 @@ describe("PATCH /api/articles/:article_id", () => {
       .expect(404)
       .then(({ body }) => {
         expect(body).toEqual({ msg: "Article not found" });
+      });
+  });
+});
+
+describe("DELETE /api/comments/:comment_id", () => {
+  test("204: should delete the given comment by comment_id", () => {
+    return request(app)
+      .delete("/api/comments/1")
+      .expect(204)
+      .then(() => {
+        return request(app)
+          .get("/api/comments/1")
+          .expect(404)
+          .then(({ body }) => {
+            expect(body).toEqual({ msg: "Not found" });
+          });
+      });
+  });
+
+  test("404: should respond with an error message for a non-existent comment ID", () => {
+    return request(app)
+      .delete("/api/comments/999")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "Comment not found" });
+      });
+  });
+
+  test("400: should respond with an error message for an invalid comment ID", () => {
+    return request(app)
+      .delete("/api/comments/invalidId")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "Bad request" });
       });
   });
 });
