@@ -105,7 +105,7 @@ describe("GET /api/articles/:article_id", () => {
 });
 
 describe("GET /api/articles", () => {
-  test("200: should return an array or article objects (with body property) in descending order by created_at", () => {
+  test("200: should return an array or article objects (without body property) in descending order by created_at", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
@@ -136,6 +136,126 @@ describe("GET /api/articles", () => {
             "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
           comment_count: 0,
         });
+      });
+  });
+  test("should return articles filtered by topic when 'topic' query parameter is provided", () => {
+    const topic = "cats";
+    return request(app)
+      .get(`/api/articles?topic=${topic}`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles.length).toBe(1);
+        expect(Array.isArray(body.articles)).toBe(true);
+        expect(body.articles[0]).toMatchObject({
+          article_id: 5,
+          title: "UNCOVERED: catspiracy to bring down democracy",
+          author: "rogersop",
+          topic: "cats",
+          created_at: "2020-08-03T13:14:00.000Z",
+          votes: 0,
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+          comment_count: 2,
+        });
+      });
+  });
+  test("should return empty array when topic is valid but not found", () => {
+    const topic = "paper";
+    return request(app)
+      .get(`/api/articles?topic=${topic}`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles.length).toBe(0);
+        expect(Array.isArray(body.articles)).toBe(true);
+        expect(body.articles).toEqual([]);
+      });
+  });
+
+  test("should return articles sorted by the specified column and in the specified order", () => {
+    const sort_by = "votes";
+    const order_by = "ASC";
+    return request(app)
+      .get(`/api/articles?sort_by=${sort_by}&order_by=${order_by}`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(Array.isArray(body.articles)).toBe(true);
+        expect(body.articles.length).toBe(13);
+        expect(body.articles[0]).toMatchObject({
+          article_id: 12,
+          title: "Moustache",
+          author: "butter_bridge",
+          topic: "mitch",
+          created_at: "2020-10-11T11:24:00.000Z",
+          votes: 0,
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+          comment_count: 0,
+        });
+      });
+  });
+  test("should return articles in the specified order when 'order' query parameter is provided - ASC", () => {
+    return request(app)
+      .get(`/api/articles?order_by=ASC`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(Array.isArray(body.articles)).toBe(true);
+        expect(body.articles.length).toBe(13);
+        expect(body.articles[0]).toMatchObject({
+          article_id: 7,
+          title: "Z",
+          author: "icellusedkars",
+          topic: "mitch",
+          created_at: "2020-01-07T14:08:00.000Z",
+          votes: 0,
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+          comment_count: 0,
+        });
+      });
+  });
+  test("should return articles in the specified order when 'order' query parameter is provided - DESC", () => {
+    return request(app)
+      .get(`/api/articles?created_at=DESC`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(Array.isArray(body.articles)).toBe(true);
+        expect(body.articles.length).toBe(13);
+        expect(body.articles[0]).toMatchObject({
+          article_id: 3,
+          title: "Eight pug gifs that remind me of mitch",
+          author: "icellusedkars",
+          topic: "mitch",
+          created_at: "2020-11-03T09:12:00.000Z",
+          votes: 0,
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+          comment_count: 2,
+        });
+      });
+  });
+  test("should return 400 Bad Request when an invalid sort_by value is provided", () => {
+    return request(app)
+      .get(`/api/articles?sort_by=banana`)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid sort value");
+      });
+  });
+  test("should return 400 Bad Request when an invalid order value is provided", () => {
+    return request(app)
+      .get(`/api/articles?order_by=banana`)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid order value");
+      });
+  });
+  test("should return 404 when querying by a topic that doesn't exist", () => {
+    const topic = "banana";
+    return request(app)
+      .get(`/api/articles?topic=${topic}`)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Topic not found");
       });
   });
 });
@@ -343,6 +463,11 @@ describe("PATCH /api/articles/:article_id", () => {
           author: "butter_bridge",
           body: "I find this existence challenging",
           created_at: "2020-07-09T20:11:00.000Z",
+          title: "Living in the shadow of a great man",
+          topic: "mitch",
+          author: "butter_bridge",
+          body: "I find this existence challenging",
+          created_at: "2020-07-09T20:11:00.000Z",
           votes: 90,
           article_img_url:
             "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
@@ -371,7 +496,6 @@ describe("PATCH /api/articles/:article_id", () => {
   });
 });
 
-
 describe("GET /api/users", () => {
   test("200: should respond with an array of user objects", () => {
     return request(app)
@@ -393,6 +517,9 @@ describe("GET /api/users", () => {
           avatar_url:
             "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
         });
+      });
+  });
+});
 
 describe("DELETE /api/comments/:comment_id", () => {
   test("204: should delete the given comment by comment_id", () => {

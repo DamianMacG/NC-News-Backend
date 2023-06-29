@@ -11,20 +11,45 @@ exports.getArticlesById = (article_id) => {
     });
 };
 
-exports.getAllArticles = () => {
-  return db
-    .query(
-      `
-    SELECT articles.article_id, articles.title, articles.author, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.comment_id)::INTEGER AS comment_count
-    FROM articles
-    LEFT JOIN comments ON articles.article_id = comments.article_id
-    GROUP BY articles.article_id
-    ORDER BY articles.created_at DESC
-  `
-    )
-    .then((result) => {
-      return result.rows;
-    });
+exports.getAllArticles = (topic, sort_by = "created_at", order_by = "DESC") => {
+  const validSorts = [
+    "article_id",
+    "title",
+    "author",
+    "topic",
+    "created_at",
+    "votes",
+    "article_img_url",
+    "comment_count",
+  ];
+  const validOrders = ["ASC", "DESC"];
+  const queryValues = [];
+  const validTopics = ["cats", "mitch", "paper"];
+  let queryString = `SELECT articles.article_id, articles.title, articles.author, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.comment_id)::INTEGER AS comment_count
+  FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id`;
+
+  if (!validSorts.includes(sort_by)) {
+    return Promise.reject({ status: 400, msg: "Invalid sort value" });
+  }
+  if (!validOrders.includes(order_by.toUpperCase())) {
+    return Promise.reject({ status: 400, msg: "Invalid order value" });
+  }
+
+  if (topic) {
+    if (!validTopics.includes(topic)) {
+      return Promise.reject({ status: 404, msg: "Topic not found" });
+    }
+
+    queryValues.push(topic);
+    queryString += ` WHERE articles.topic = $1`;
+  }
+
+  queryString += ` GROUP BY articles.article_id, articles.title, articles.author, articles.topic, articles.created_at, articles.votes, articles.article_img_url`;
+  queryString += ` ORDER BY ${sort_by} ${order_by};`;
+
+  return db.query(queryString, queryValues).then(({ rows }) => {
+    return rows;
+  });
 };
 
 exports.getAllArticleIdComments = (article_id) => {

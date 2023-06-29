@@ -4,7 +4,7 @@ const {
   getAllArticleIdComments,
   insertComment,
   checkUsernameExists,
-  updateArticleVotes
+  updateArticleVotes,
 } = require("../models/articles.models");
 
 exports.getArticleById = (req, res, next) => {
@@ -18,10 +18,18 @@ exports.getArticleById = (req, res, next) => {
 };
 
 exports.getArticles = (req, res, next) => {
-  getAllArticles()
+  const topic = req.query.topic;
+  const sort_by = req.query.sort_by;
+  const order_by = req.query.order_by;
+
+
+  
+  getAllArticles(topic, sort_by, order_by)
     .then((articles) => res.status(200).send({ articles }))
     .catch(next);
 };
+
+
 
 exports.getArticleIdComments = (req, res, next) => {
   const { article_id } = req.params;

@@ -7,6 +7,7 @@ const {
   getArticleIdComments,
   postComment,
   updateArticle,
+  
 } = require("./controllers/articles.controller");
 
 const { getAllUsers } = require("./controllers/users.controller");
