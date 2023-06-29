@@ -371,6 +371,7 @@ describe("PATCH /api/articles/:article_id", () => {
   });
 });
 
+
 describe("GET /api/users", () => {
   test("200: should respond with an array of user objects", () => {
     return request(app)
@@ -392,6 +393,37 @@ describe("GET /api/users", () => {
           avatar_url:
             "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
         });
+
+describe("DELETE /api/comments/:comment_id", () => {
+  test("204: should delete the given comment by comment_id", () => {
+    return request(app)
+      .delete("/api/comments/1")
+      .expect(204)
+      .then(() => {
+        return request(app)
+          .get("/api/comments/1")
+          .expect(404)
+          .then(({ body }) => {
+            expect(body).toEqual({ msg: "Not found" });
+          });
+      });
+  });
+
+  test("404: should respond with an error message for a non-existent comment ID", () => {
+    return request(app)
+      .delete("/api/comments/999")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "Comment not found" });
+      });
+  });
+
+  test("400: should respond with an error message for an invalid comment ID", () => {
+    return request(app)
+      .delete("/api/comments/invalidId")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "Bad request" });
       });
   });
 });
