@@ -21,6 +21,7 @@ app.use(express.json());
 app.get("/api", getEndpoints);
 app.get("/api/topics", getTopics);
 app.get("/api/articles", getArticles);
+// app.get("/api/query/articles", queryArticles);
 app.get("/api/articles/:article_id", getArticleById);
 app.get("/api/articles/:article_id/comments", getArticleIdComments);
 app.post("/api/articles/:article_id/comments", postComment);
