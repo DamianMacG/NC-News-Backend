@@ -159,6 +159,17 @@ describe("GET /api/articles", () => {
         });
       });
   });
+  test("should return empty array when topic is valid but not found", () => {
+    const topic = "paper";
+    return request(app)
+      .get(`/api/articles?topic=${topic}`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles.length).toBe(0);
+        expect(Array.isArray(body.articles)).toBe(true);
+        expect(body.articles).toEqual([]);
+      });
+  });
 
   test("should return articles sorted by the specified column and in the specified order", () => {
     const sort_by = "votes";
@@ -236,6 +247,15 @@ describe("GET /api/articles", () => {
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("Invalid order value");
+      });
+  });
+  test("should return 404 when querying by a topic that doesn't exist", () => {
+    const topic = "banana";
+    return request(app)
+      .get(`/api/articles?topic=${topic}`)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Topic not found");
       });
   });
 });

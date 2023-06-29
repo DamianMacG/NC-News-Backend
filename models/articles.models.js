@@ -24,6 +24,7 @@ exports.getAllArticles = (topic, sort_by = "created_at", order_by = "DESC") => {
   ];
   const validOrders = ["ASC", "DESC"];
   const queryValues = [];
+  const validTopics = ["cats", "mitch", "paper"];
   let queryString = `SELECT articles.article_id, articles.title, articles.author, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.comment_id)::INTEGER AS comment_count
   FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id`;
 
@@ -35,6 +36,10 @@ exports.getAllArticles = (topic, sort_by = "created_at", order_by = "DESC") => {
   }
 
   if (topic) {
+    if (!validTopics.includes(topic)) {
+      return Promise.reject({ status: 404, msg: "Topic not found" });
+    }
+
     queryValues.push(topic);
     queryString += ` WHERE articles.topic = $1`;
   }
