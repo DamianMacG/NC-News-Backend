@@ -115,3 +115,20 @@ exports.updateArticleVotes = (article_id, inc_votes) => {
       return result.rows[0];
     });
 };
+
+exports.createArticle = ({ author, title, body, topic, article_img_url }) => {
+  return db
+    .query(
+      `
+  INSERT INTO articles (author, title, body, topic, article_img_url)
+  VALUES ($1, $2, $3, $4, $5)
+  RETURNING *, 0 as votes, 0 AS comment_count, NOW() AS created_at
+`,
+      [author, title, body, topic, article_img_url]
+    )
+    .then((result) => {
+      console.log(result);
+
+      return result.rows[0];
+    });
+};

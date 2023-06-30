@@ -667,3 +667,33 @@ describe("PATCH /api/comments/:comment_id", () => {
       });
   });
 });
+
+// describe("POST /api/articles", () => {
+//   test("201 should respond with the newly added article", () => {
+//     return request(app)
+//       .post("/api/articles")
+//       .send({
+//         author: "TestUser",
+//         title: "Test Article",
+//         body: "This is a test article.",
+//         topic: "Test Topic",
+//         article_img_url:
+//           "https://static0.gamerantimages.com/wordpress/wp-content/uploads/2021/10/Gandalf-Name-Feature-Image.jpg",
+//       })
+//       .expect(201)
+//       .then(({ body }) => {
+//         expect(body.article).toEqual({
+//           author: "TestUser",
+//           title: "Test Article",
+//           body: "This is a test article.",
+//           topic: "Test Topic",
+//           article_img_url:
+//             "https://static0.gamerantimages.com/wordpress/wp-content/uploads/2021/10/Gandalf-Name-Feature-Image.jpg",
+//           article_id: expect.any(Number),
+//           votes: 0,
+//           created_at: expect.any(String),
+//           comment_count: 0,
+//         });
+//       });
+//   });
+// });
