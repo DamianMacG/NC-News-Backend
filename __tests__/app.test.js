@@ -669,31 +669,31 @@ describe("PATCH /api/comments/:comment_id", () => {
 });
 
 // describe("POST /api/articles", () => {
-//   test("201 should respond with the newly added article", () => {
+//   test("201 should add a new article and return the newly added article", () => {
+//     const newArticle = {
+//       author: "John Doe",
+//       title: "Test Article",
+//       body: "This is a test article",
+//       topic: "technology",
+//       article_img_url: "https://example.com/image.jpg",
+//     };
+
 //     return request(app)
 //       .post("/api/articles")
-//       .send({
-//         author: "TestUser",
-//         title: "Test Article",
-//         body: "This is a test article.",
-//         topic: "Test Topic",
-//         article_img_url:
-//           "https://static0.gamerantimages.com/wordpress/wp-content/uploads/2021/10/Gandalf-Name-Feature-Image.jpg",
-//       })
+//       .send(newArticle)
 //       .expect(201)
-//       .then(({ body }) => {
-//         expect(body.article).toEqual({
-//           author: "TestUser",
-//           title: "Test Article",
-//           body: "This is a test article.",
-//           topic: "Test Topic",
-//           article_img_url:
-//             "https://static0.gamerantimages.com/wordpress/wp-content/uploads/2021/10/Gandalf-Name-Feature-Image.jpg",
-//           article_id: expect.any(Number),
-//           votes: 0,
-//           created_at: expect.any(String),
-//           comment_count: 0,
-//         });
+//       .then(({body}) => {
+//         expect(body.article).toHaveProperty("article_id");
+//         expect(body.article).toHaveProperty("author", newArticle.author);
+//         expect(body.article).toHaveProperty("title", newArticle.title);
+//         expect(body.article).toHaveProperty("body", newArticle.body);
+//         expect(body.article).toHaveProperty("topic", newArticle.topic);
+//         expect(body.article).toHaveProperty(
+//           "article_img_url",
+//           newArticle.article_img_url
+//         );
+//         expect(body.article).toHaveProperty("created_at");
+//         expect(body.article).toHaveProperty("votes", 0);
 //       });
 //   });
 // });
