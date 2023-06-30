@@ -667,3 +667,61 @@ describe("PATCH /api/comments/:comment_id", () => {
       });
   });
 });
+
+describe("POST /api/topics", () => {
+  test("should add a new topic", () => {
+    return request(app)
+      .post("/api/topics")
+      .send({
+        slug: "new-topic",
+        description: "New topic description",
+      })
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.topic).toMatchObject({
+          slug: "new-topic",
+          description: "New topic description",
+        });
+      });
+  });
+  test("should respond with an error message for missing 'slug' property", () => {
+    return request(app)
+      .post("/api/topics")
+      .send({ description: "Test description" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "Bad request - missing 'slug' property" });
+      });
+  });
+  test("should respond with an error message for missing 'description' property", () => {
+    return request(app)
+      .post("/api/topics")
+      .send({ slug: "test-topic" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toEqual({
+          msg: "Bad request - missing 'description' property",
+        });
+      });
+  });
+  test("should respond with an error message for empty 'slug' property", () => {
+    return request(app)
+      .post("/api/topics")
+      .send({ slug: "", description: "Test description" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "Bad request - missing 'slug' property" });
+      });
+  });
+  test("should respond with an error message for empty 'description' property", () => {
+    return request(app)
+      .post("/api/topics")
+      .send({ slug: "test-topic", description: "" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toEqual({
+          msg: "Bad request - missing 'description' property",
+        });
+      });
+  });
+});
