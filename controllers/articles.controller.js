@@ -5,6 +5,7 @@ const {
   insertComment,
   checkUsernameExists,
   updateArticleVotes,
+  deleteArticle,
 } = require("../models/articles.models");
 
 exports.getArticleById = (req, res, next) => {
@@ -22,14 +23,10 @@ exports.getArticles = (req, res, next) => {
   const sort_by = req.query.sort_by;
   const order_by = req.query.order_by;
 
-
-  
   getAllArticles(topic, sort_by, order_by)
     .then((articles) => res.status(200).send({ articles }))
     .catch(next);
 };
-
-
 
 exports.getArticleIdComments = (req, res, next) => {
   const { article_id } = req.params;
@@ -79,6 +76,16 @@ exports.updateArticle = (req, res, next) => {
   updateArticleVotes(article_id, inc_votes)
     .then((article) => {
       res.status(200).send({ article });
+    })
+    .catch(next);
+};
+
+exports.deleteArticleById = (req, res, next) => {
+  const article_id = req.params.article_id;
+
+  deleteArticle(article_id)
+    .then(() => {
+      res.sendStatus(204);
     })
     .catch(next);
 };

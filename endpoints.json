@@ -134,6 +134,13 @@
       }
     }
   },
+  "DELETE /api/articles/:article_id": {
+    "description": "delete an article by article_id",
+    "queries": [],
+    "exampleResponse": {
+      "msg": "Deleted"
+    }
+  },
   "GET /api/users": {
     "description": "get all users",
     "queries": [],
