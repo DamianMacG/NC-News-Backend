@@ -118,14 +118,14 @@
         "created_at": "2020-07-09T20:11:00.000Z",
         "votes": 110,
         "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
-      },
-      "DELETE /api/articles/:article_id": {
-        "description": "delete an article by article_id",
-        "queries": [],
-        "exampleResponse": {
-          "msg": "Deleted"
-        }
       }
+    }
+  },
+  "DELETE /api/articles/:article_id": {
+    "description": "delete an article by article_id",
+    "queries": [],
+    "exampleResponse": {
+      "msg": "Deleted"
     }
   },
   "GET /api/users": {
@@ -144,6 +144,18 @@
           "avatar_url": "https://www.example.com/avatar.png"
         }
       ]
+    }
+  },
+  "GET /api/users/:username": {
+    "description": "Get a user by their username",
+    "queries": [],
+    "exampleQuery": "/api/users/butter_bridge",
+    "exampleResponse": {
+      "user": {
+        "username": "butter_bridge",
+        "avatar_url": "https://www.example.com/avatar.png",
+        "name": "Jonny"
+      }
     }
   }
 }

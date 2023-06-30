@@ -573,3 +573,25 @@ describe("DELETE /api/comments/:comment_id", () => {
       });
   });
 });
+
+describe("GET /api/users/:username", () => {
+  test("200 should respond with the user object for a valid username", () => {
+    return request(app)
+      .get("/api/users/butter_bridge")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.user).toHaveProperty("username");
+        expect(body.user).toHaveProperty("avatar_url");
+        expect(body.user).toHaveProperty("name");
+      });
+  });
+
+  test("404 should respond with an error message for a invalid/non-existent username", () => {
+    return request(app)
+      .get("/api/users/banana")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "User not found" });
+      });
+  });
+});

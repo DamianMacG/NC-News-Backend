@@ -7,10 +7,12 @@ const {
   getArticleIdComments,
   postComment,
   updateArticle,
-  
 } = require("./controllers/articles.controller");
 
-const { getAllUsers } = require("./controllers/users.controller");
+const {
+  getAllUsers,
+  getUserByUsername,
+} = require("./controllers/users.controller");
 
 const { deleteComment } = require("./controllers/comments.controller");
 
@@ -28,12 +30,13 @@ app.get("/api/topics", getTopics);
 app.get("/api/articles", getArticles);
 app.get("/api/articles/:article_id", getArticleById);
 app.get("/api/articles/:article_id/comments", getArticleIdComments);
+app.get("/api/users", getAllUsers);
+app.get("/api/users/:username", getUserByUsername);
 app.post("/api/articles/:article_id/comments", postComment);
 app.patch("/api/articles/:article_id", updateArticle);
 app.delete("/api/comments/:comment_id", deleteComment);
 
 
-app.get("/api/users", getAllUsers);
 
 app.all("*", (_, res) => {
   res.status(404).send({ msg: "Not found" });
