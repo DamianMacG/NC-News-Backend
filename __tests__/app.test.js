@@ -595,3 +595,75 @@ describe("GET /api/users/:username", () => {
       });
   });
 });
+
+describe("PATCH /api/comments/:comment_id", () => {
+  test("200 should respond with the updated comment object for a valid comment_id and positive inc_votes", () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .send({ inc_votes: 10 })
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comment).toHaveProperty("comment_id");
+        expect(body.comment).toHaveProperty("votes");
+        expect(body.comment.votes).toBe(26);
+        expect(body.comment).toEqual({
+          comment_id: 1,
+          body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+          article_id: 9,
+          author: "butter_bridge",
+          votes: 26,
+          created_at: "2020-04-06T12:17:00.000Z",
+        });
+      });
+  });
+
+  test("200 should respond with the updated comment object for a valid comment_id and negative inc_votes", () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .send({ inc_votes: -10 })
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comment).toHaveProperty("comment_id");
+        expect(body.comment).toHaveProperty("votes");
+        expect(body.comment.votes).toBe(6);
+        expect(body.comment).toEqual({
+          comment_id: 1,
+          body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+          article_id: 9,
+          author: "butter_bridge",
+          votes: 6,
+          created_at: "2020-04-06T12:17:00.000Z",
+        });
+      });
+  });
+
+  test("404 should respond with an error message for a non-existent comment_id", () => {
+    return request(app)
+      .patch("/api/comments/999")
+      .send({ inc_votes: 1 })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "Comment not found" });
+      });
+  });
+
+  test("400 should respond with an error message for missing inc_votes property", () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .send({})
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "Bad request - Invalid inc_votes value" });
+      });
+  });
+
+  test("400 should respond with an error message for invalid inc_votes value", () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .send({ inc_votes: "invalid" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "Bad request - Invalid inc_votes value" });
+      });
+  });
+});
