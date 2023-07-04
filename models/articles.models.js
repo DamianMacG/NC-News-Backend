@@ -116,25 +116,17 @@ exports.updateArticleVotes = (article_id, inc_votes) => {
     });
 };
 
-exports.createArticle = (
-  author,
-  title,
-  body,
-  topic,
-  article_img_url
-) => {
+exports.createArticle = (author, title, body, topic, article_img_url) => {
   return db
     .query(
       `
   INSERT INTO articles (author, title, body, topic, article_img_url)
   VALUES ($1, $2, $3, $4, $5)
-  RETURNING *
+  RETURNING *, 0 AS comment_count
 `,
       [author, title, body, topic, article_img_url]
     )
     .then((result) => {
-      console.log(result);
-
       return result.rows[0];
     });
 };

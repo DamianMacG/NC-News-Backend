@@ -80,18 +80,15 @@ exports.updateArticle = (req, res, next) => {
     .catch(next);
 };
 
-
 exports.addArticle = (req, res, next) => {
   const { author, title, body, topic, article_img_url } = req.body;
+  if (!author || !title || !body || !topic || !article_img_url) {
+    return res.status(400).send({ msg: "Bad request" });
+  }
 
   createArticle(author, title, body, topic, article_img_url)
     .then((article) => {
-      const newArticle = {
-        ...article,
-        votes: 0,
-        created_at: article.created_at.toISOString(),
-      };
-      res.status(201).send({ article: newArticle });
+      res.status(201).send({ article });
     })
     .catch(next);
 };

@@ -668,32 +668,71 @@ describe("PATCH /api/comments/:comment_id", () => {
   });
 });
 
-// describe("POST /api/articles", () => {
-//   test("201 should add a new article and return the newly added article", () => {
-//     const newArticle = {
-//       author: "John Doe",
-//       title: "Test Article",
-//       body: "This is a test article",
-//       topic: "technology",
-//       article_img_url: "https://example.com/image.jpg",
-//     };
+describe("POST /api/articles", () => {
+  test("201 should add a new article and return the newly added article", () => {
+    const newArticle = {
+      author: "butter_bridge",
+      title: "Test Article",
+      body: "This is a test article",
+      topic: "mitch",
+      article_img_url: "https://example.com/image.jpg",
+    };
 
-//     return request(app)
-//       .post("/api/articles")
-//       .send(newArticle)
-//       .expect(201)
-//       .then(({body}) => {
-//         expect(body.article).toHaveProperty("article_id");
-//         expect(body.article).toHaveProperty("author", newArticle.author);
-//         expect(body.article).toHaveProperty("title", newArticle.title);
-//         expect(body.article).toHaveProperty("body", newArticle.body);
-//         expect(body.article).toHaveProperty("topic", newArticle.topic);
-//         expect(body.article).toHaveProperty(
-//           "article_img_url",
-//           newArticle.article_img_url
-//         );
-//         expect(body.article).toHaveProperty("created_at");
-//         expect(body.article).toHaveProperty("votes", 0);
-//       });
-//   });
-// });
+    return request(app)
+      .post("/api/articles")
+      .send(newArticle)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.article).toHaveProperty("article_id");
+        expect(body.article).toHaveProperty("author", newArticle.author);
+        expect(body.article).toHaveProperty("title", newArticle.title);
+        expect(body.article).toHaveProperty("body", newArticle.body);
+        expect(body.article).toHaveProperty("topic", newArticle.topic);
+        expect(body.article).toHaveProperty(
+          "article_img_url",
+          newArticle.article_img_url
+        );
+        expect(body.article).toHaveProperty("created_at");
+        expect(body.article).toHaveProperty("votes", 0);
+        expect(body.article).toHaveProperty("comment_count", 0);
+      });
+  });
+  test("should respond with an error for missing required properties", () => {
+    const incompleteArticle = {
+      author: "butter_bridge",
+      body: "This is a test article",
+      topic: "mitch",
+    };
+
+    return request(app)
+      .post("/api/articles")
+      .send(incompleteArticle)
+      .expect(400)
+      .then((response) => {
+        const { body } = response;
+        expect(body).toEqual({
+          msg: "Bad request",
+        });
+      });
+  });
+  test("should respond with an error for invalid input", () => {
+    const invalidArticle = {
+      author: "butter_bridge",
+      title: "Test Article",
+      body: "This is a test article",
+      topic: "mitch",
+      invalidProperty: "Invalid",
+    };
+  
+    return request(app)
+      .post("/api/articles")
+      .send(invalidArticle)
+      .expect(400)
+      .then((response) => {
+        const { body } = response;
+        expect(body).toEqual({
+          msg: "Bad request",
+        });
+      });
+  });
+});

@@ -1,7 +1,6 @@
 
 exports.handlePsqlErrors = (err, req, res, next) => {
   if (err.code) {
-    // console.log("PostgreSQL Error Code:", err.code);
     res.status(400).send({ msg: "Bad request" });
   } else next(err);
 };
