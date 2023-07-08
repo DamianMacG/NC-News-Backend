@@ -116,6 +116,7 @@ exports.updateArticleVotes = (article_id, inc_votes) => {
     });
 };
 
+
 exports.createArticle = (author, title, body, topic, article_img_url) => {
   return db
     .query(
@@ -128,5 +129,13 @@ exports.createArticle = (author, title, body, topic, article_img_url) => {
     )
     .then((result) => {
       return result.rows[0];
+
+exports.deleteArticle = (article_id) => {
+  return db.query(`DELETE FROM articles WHERE article_id = $1`, [article_id])
+    .then((result) => {
+      if (result.rowCount === 0) {
+        return Promise.reject({ status: 404, msg: "Article not found" });
+      }
+      return result.rows;
     });
 };

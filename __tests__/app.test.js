@@ -157,7 +157,7 @@ describe("GET /api/articles", () => {
         });
       });
   });
-  test("should return articles filtered by topic when 'topic' query parameter is provided", () => {
+  test("200 should return articles filtered by topic when 'topic' query parameter is provided", () => {
     const topic = "cats";
     return request(app)
       .get(`/api/articles?topic=${topic}`)
@@ -178,7 +178,7 @@ describe("GET /api/articles", () => {
         });
       });
   });
-  test("should return empty array when topic is valid but not found", () => {
+  test("200 should return empty array when topic is valid but not found", () => {
     const topic = "paper";
     return request(app)
       .get(`/api/articles?topic=${topic}`)
@@ -190,7 +190,7 @@ describe("GET /api/articles", () => {
       });
   });
 
-  test("should return articles sorted by the specified column and in the specified order", () => {
+  test("200 should return articles sorted by the specified column and in the specified order", () => {
     const sort_by = "votes";
     const order_by = "ASC";
     return request(app)
@@ -212,7 +212,7 @@ describe("GET /api/articles", () => {
         });
       });
   });
-  test("should return articles in the specified order when 'order' query parameter is provided - ASC", () => {
+  test("200 should return articles in the specified order when 'order' query parameter is provided - ASC", () => {
     return request(app)
       .get(`/api/articles?order_by=ASC`)
       .expect(200)
@@ -232,7 +232,7 @@ describe("GET /api/articles", () => {
         });
       });
   });
-  test("should return articles in the specified order when 'order' query parameter is provided - DESC", () => {
+  test("200 should return articles in the specified order when 'order' query parameter is provided - DESC", () => {
     return request(app)
       .get(`/api/articles?created_at=DESC`)
       .expect(200)
@@ -252,7 +252,7 @@ describe("GET /api/articles", () => {
         });
       });
   });
-  test("should return 400 Bad Request when an invalid sort_by value is provided", () => {
+  test("400 should return 400 Bad Request when an invalid sort_by value is provided", () => {
     return request(app)
       .get(`/api/articles?sort_by=banana`)
       .expect(400)
@@ -260,7 +260,7 @@ describe("GET /api/articles", () => {
         expect(body.msg).toBe("Invalid sort value");
       });
   });
-  test("should return 400 Bad Request when an invalid order value is provided", () => {
+  test("400 should return 400 Bad Request when an invalid order value is provided", () => {
     return request(app)
       .get(`/api/articles?order_by=banana`)
       .expect(400)
@@ -268,7 +268,7 @@ describe("GET /api/articles", () => {
         expect(body.msg).toBe("Invalid order value");
       });
   });
-  test("should return 404 when querying by a topic that doesn't exist", () => {
+  test("404 should return 404 when querying by a topic that doesn't exist", () => {
     const topic = "banana";
     return request(app)
       .get(`/api/articles?topic=${topic}`)
@@ -482,11 +482,6 @@ describe("PATCH /api/articles/:article_id", () => {
           author: "butter_bridge",
           body: "I find this existence challenging",
           created_at: "2020-07-09T20:11:00.000Z",
-          title: "Living in the shadow of a great man",
-          topic: "mitch",
-          author: "butter_bridge",
-          body: "I find this existence challenging",
-          created_at: "2020-07-09T20:11:00.000Z",
           votes: 90,
           article_img_url:
             "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
@@ -668,6 +663,7 @@ describe("PATCH /api/comments/:comment_id", () => {
   });
 });
 
+
 describe("POST /api/articles", () => {
   test("201 should add a new article and return the newly added article", () => {
     const newArticle = {
@@ -732,7 +728,89 @@ describe("POST /api/articles", () => {
         const { body } = response;
         expect(body).toEqual({
           msg: "Bad request",
+
+describe("POST /api/topics", () => {
+  test("201 should add a new topic", () => {
+    return request(app)
+      .post("/api/topics")
+      .send({
+        slug: "new-topic",
+        description: "New topic description",
+      })
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.topic).toMatchObject({
+          slug: "new-topic",
+          description: "New topic description",
+        });
+      });
+  });
+  test("400 should respond with an error message for missing 'slug' property", () => {
+    return request(app)
+      .post("/api/topics")
+      .send({ description: "Test description" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "Bad request - missing 'slug' property" });
+      });
+  });
+  test("400 should respond with an error message for missing 'description' property", () => {
+    return request(app)
+      .post("/api/topics")
+      .send({ slug: "test-topic" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toEqual({
+          msg: "Bad request - missing 'description' property",
+        });
+      });
+  });
+  test("400 should respond with an error message for empty 'slug' property", () => {
+    return request(app)
+      .post("/api/topics")
+      .send({ slug: "", description: "Test description" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "Bad request - missing 'slug' property" });
+      });
+  });
+  test("400 should respond with an error message for empty 'description' property", () => {
+    return request(app)
+      .post("/api/topics")
+      .send({ slug: "test-topic", description: "" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toEqual({
+          msg: "Bad request - missing 'description' property",
+
         });
       });
   });
 });
+
+
+describe("DELETE /api/articles/:article_id", () => {
+  test("204 should delete an article and its comments", () => {
+    return request(app)
+      .delete("/api/articles/1")
+      .expect(204)
+      .then(() => {
+        return request(app)
+          .get("/api/articles/1")
+          .expect(404)
+          .then(({ body }) => {
+            expect(body).toEqual({ msg: "Article not found" });
+          });
+      });
+  });
+});
+
+test("404 should respond with an error message for a non-existent article_id", () => {
+  return request(app)
+    .delete("/api/articles/999")
+    .expect(404)
+    .then(({ body }) => {
+      expect(body).toEqual({ msg: "Article not found" });
+    });
+});
+
