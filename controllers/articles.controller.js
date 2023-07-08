@@ -5,9 +5,8 @@ const {
   insertComment,
   checkUsernameExists,
   updateArticleVotes,
-createArticle,
-deleteArticle,
-
+  createArticle,
+  deleteArticle,
 } = require("../models/articles.models");
 
 exports.getArticleById = (req, res, next) => {
@@ -82,7 +81,6 @@ exports.updateArticle = (req, res, next) => {
     .catch(next);
 };
 
-
 exports.addArticle = (req, res, next) => {
   const { author, title, body, topic, article_img_url } = req.body;
   if (!author || !title || !body || !topic || !article_img_url) {
@@ -91,6 +89,9 @@ exports.addArticle = (req, res, next) => {
   createArticle(author, title, body, topic, article_img_url)
     .then((article) => {
       res.status(201).send({ article });
+    })
+    .catch(next);
+};
 
 exports.deleteArticleById = (req, res, next) => {
   const article_id = req.params.article_id;

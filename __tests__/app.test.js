@@ -663,7 +663,6 @@ describe("PATCH /api/comments/:comment_id", () => {
   });
 });
 
-
 describe("POST /api/articles", () => {
   test("201 should add a new article and return the newly added article", () => {
     const newArticle = {
@@ -719,7 +718,7 @@ describe("POST /api/articles", () => {
       topic: "mitch",
       invalidProperty: "Invalid",
     };
-  
+
     return request(app)
       .post("/api/articles")
       .send(invalidArticle)
@@ -728,6 +727,10 @@ describe("POST /api/articles", () => {
         const { body } = response;
         expect(body).toEqual({
           msg: "Bad request",
+        });
+      });
+  });
+});
 
 describe("POST /api/topics", () => {
   test("201 should add a new topic", () => {
@@ -782,12 +785,10 @@ describe("POST /api/topics", () => {
       .then(({ body }) => {
         expect(body).toEqual({
           msg: "Bad request - missing 'description' property",
-
         });
       });
   });
 });
-
 
 describe("DELETE /api/articles/:article_id", () => {
   test("204 should delete an article and its comments", () => {
@@ -813,4 +814,3 @@ test("404 should respond with an error message for a non-existent article_id", (
       expect(body).toEqual({ msg: "Article not found" });
     });
 });
-
