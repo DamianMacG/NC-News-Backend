@@ -165,6 +165,9 @@ describe("GET /api/articles", () => {
       .then(({ body }) => {
         expect(body.articles.length).toBe(1);
         expect(Array.isArray(body.articles)).toBe(true);
+        expect(body).toHaveProperty("total_count");
+        expect(body.total_count).toBeGreaterThanOrEqual(body.articles.length);
+        expect(body.total_count).toBe(13);
         expect(body.articles[0]).toMatchObject({
           article_id: 5,
           title: "UNCOVERED: catspiracy to bring down democracy",
@@ -187,6 +190,9 @@ describe("GET /api/articles", () => {
         expect(body.articles.length).toBe(0);
         expect(Array.isArray(body.articles)).toBe(true);
         expect(body.articles).toEqual([]);
+        expect(body).toHaveProperty("total_count");
+        expect(body.total_count).toBeGreaterThanOrEqual(body.articles.length);
+        expect(body.total_count).toBe(13);
       });
   });
 
@@ -199,6 +205,9 @@ describe("GET /api/articles", () => {
       .then(({ body }) => {
         expect(Array.isArray(body.articles)).toBe(true);
         expect(body.articles.length).toBeGreaterThan(1);
+        expect(body).toHaveProperty("total_count");
+        expect(body.total_count).toBeGreaterThanOrEqual(body.articles.length);
+        expect(body.total_count).toBe(13);
         expect(body.articles[0]).toMatchObject({
           article_id: 12,
           title: "Moustache",
@@ -219,6 +228,9 @@ describe("GET /api/articles", () => {
       .then(({ body }) => {
         expect(Array.isArray(body.articles)).toBe(true);
         expect(body.articles.length).toBeGreaterThan(1);
+        expect(body).toHaveProperty("total_count");
+        expect(body.total_count).toBeGreaterThanOrEqual(body.articles.length);
+        expect(body.total_count).toBe(13);
         expect(body.articles[0]).toMatchObject({
           article_id: 7,
           title: "Z",
@@ -239,6 +251,9 @@ describe("GET /api/articles", () => {
       .then(({ body }) => {
         expect(Array.isArray(body.articles)).toBe(true);
         expect(body.articles.length).toBeGreaterThan(1);
+        expect(body).toHaveProperty("total_count");
+        expect(body.total_count).toBeGreaterThanOrEqual(body.articles.length);
+        expect(body.total_count).toBe(13);
         expect(body.articles[0]).toMatchObject({
           article_id: 3,
           title: "Eight pug gifs that remind me of mitch",
@@ -284,6 +299,9 @@ describe("GET /api/articles", () => {
       .then(({ body }) => {
         expect(Array.isArray(body.articles)).toBe(true);
         expect(body.articles.length).toBe(10);
+        expect(body).toHaveProperty("total_count");
+        expect(body.total_count).toBeGreaterThanOrEqual(body.articles.length);
+        expect(body.total_count).toBe(13);
       });
   });
 
@@ -294,6 +312,9 @@ describe("GET /api/articles", () => {
       .then(({ body }) => {
         expect(Array.isArray(body.articles)).toBe(true);
         expect(body.articles.length).toBe(10);
+        expect(body).toHaveProperty("total_count");
+        expect(body.total_count).toBeGreaterThanOrEqual(body.articles.length);
+        expect(body.total_count).toBe(13);
         expect(body.articles[9]).toEqual( {
           article_id: 4,
           title: "Student SUES Mitch!",
@@ -315,6 +336,9 @@ describe("GET /api/articles", () => {
       .then(({ body }) => {
         expect(body.articles.length).toBe(0);
         expect(body.articles).toEqual([]);
+        expect(body).toHaveProperty("total_count");
+        expect(body.total_count).toBeGreaterThanOrEqual(body.articles.length);
+        expect(body.total_count).toBe(13);
       });
   });
 
@@ -325,6 +349,9 @@ describe("GET /api/articles", () => {
       .then(({ body }) => {
         expect(Array.isArray(body.articles)).toBe(true);
         expect(body.articles.length).toBe(8);
+        expect(body).toHaveProperty("total_count");
+        expect(body.total_count).toBeGreaterThanOrEqual(body.articles.length);
+        expect(body.total_count).toBe(13);
       });
   });
 
@@ -335,6 +362,9 @@ describe("GET /api/articles", () => {
       .then(({ body }) => {
         expect(Array.isArray(body.articles)).toBe(true);
         expect(body.articles.length).toBe(3);
+        expect(body).toHaveProperty("total_count");
+        expect(body.total_count).toBeGreaterThanOrEqual(body.articles.length);
+        expect(body.total_count).toBe(13);
       });
   });
   test("200 should return the correct subset of articles based on page and limit", () => {
@@ -344,6 +374,9 @@ describe("GET /api/articles", () => {
       .then(({ body }) => {
         expect(Array.isArray(body.articles)).toBe(true);
         expect(body.articles.length).toBe(5);
+        expect(body).toHaveProperty("total_count");
+        expect(body.total_count).toBeGreaterThanOrEqual(body.articles.length);
+        expect(body.total_count).toBe(13);
       });
   });
 

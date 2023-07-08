@@ -67,8 +67,15 @@ exports.getAllArticles = (
     }
   }
 
-  return db.query(queryString, queryValues).then(({ rows }) => {
-    return rows;
+  const countQueryString = `SELECT COUNT(*)::INTEGER AS total_count FROM articles`;
+
+  return Promise.all([
+    db.query(queryString, queryValues),
+    db.query(countQueryString),
+  ]).then(([result, countResult]) => {
+    const articles = result.rows;
+    const total_count = countResult.rows[0].total_count;
+    return { articles, total_count };
   });
 };
 

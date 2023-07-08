@@ -23,7 +23,7 @@
     }
   },
   "GET /api/articles": {
-    "description": "serves an array of articles with a selection query parameters if desired",
+    "description": "serves an array of articles with a selection query parameters if desired, and a total article count outside of the array",
     "queries": ["author", "topic", "sort_by", "order"],
     "exampleRequest": {
       "topic": "cats",
@@ -64,7 +64,8 @@
           "article_img_url": "https://images.pexels.com/photos/987654/mr-whiskers-curious-cat.jpg?w=700&h=700",
           "comment_count": 3
         }
-      ]
+      ],
+      "total_count": 13
     }
   },
   "POST /api/articles": {
