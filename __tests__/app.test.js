@@ -317,6 +317,7 @@ describe("GET /api/articles/:article_id/comments", () => {
         ]);
       });
   });
+
   test("200: should return an empty array if article id exists but has no comments", () => {
     return request(app)
       .get("/api/articles/2/comments")
@@ -325,6 +326,7 @@ describe("GET /api/articles/:article_id/comments", () => {
         expect(body.comments).toEqual([]);
       });
   });
+
   test("404: should respond with error message if article id does not exist", () => {
     return request(app)
       .get("/api/articles/999/comments")
@@ -333,12 +335,131 @@ describe("GET /api/articles/:article_id/comments", () => {
         expect(body).toEqual({ msg: "Article not found" });
       });
   });
-  test("400 should respond with an error message for an invalid ID endpoint", () => {
+
+  test("400: should respond with an error message for an invalid ID endpoint", () => {
     return request(app)
       .get("/api/articles/hello/comments")
       .expect(400)
       .then(({ body }) => {
         expect(body).toEqual({ msg: "Bad request" });
+      });
+  });
+
+  test("should return the correct number of comments based on limit and page", () => {
+    const articleId = 1;
+    const limit = 5;
+    const page = 1;
+
+    return request(app)
+      .get(`/api/articles/${articleId}/comments?limit=${limit}&p=${page}`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments.length).toBe(limit);
+      });
+  });
+
+  test("should handle invalid limit value", () => {
+    const articleId = 1;
+    const invalidLimit = "abc";
+
+    return request(app)
+      .get(`/api/articles/${articleId}/comments?limit=${invalidLimit}`)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "Bad request" });
+      });
+  });
+
+  test("should handle invalid p value", () => {
+    const articleId = 1;
+    const invalidPage = -1;
+
+    return request(app)
+      .get(`/api/articles/${articleId}/comments?p=${invalidPage}`)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "Bad request" });
+      });
+  });
+
+  test("should return an empty array for out-of-range p value", () => {
+    const articleId = 1;
+    const limit = 5;
+    const outOfRangePage = 9999;
+
+    return request(app)
+      .get(
+        `/api/articles/${articleId}/comments?limit=${limit}&p=${outOfRangePage}`
+      )
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments).toEqual([]);
+        expect(body.comments.length).toBe(0);
+      });
+  });
+
+  test("should handle reaching the last page", () => {
+    const articleId = 1;
+    const limit = 15;
+    const p = 1;
+
+    return request(app)
+      .get(`/api/articles/${articleId}/comments?limit=${limit}&p=${p}`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments.length).toBe(11);
+      });
+  });
+  test("should handle reaching the last page", () => {
+    const articleId = 1;
+    const limit = 5;
+    const p = 3;
+
+    return request(app)
+      .get(`/api/articles/${articleId}/comments?limit=${limit}&p=${p}`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments.length).toBe(1);
+      });
+  });
+  test("should handle reaching the last page", () => {
+    const articleId = 1;
+    const limit = 5;
+    const p = 4;
+
+    return request(app)
+      .get(`/api/articles/${articleId}/comments?limit=${limit}&p=${p}`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments).toEqual([]);
+        expect(body.comments.length).toBe(0);
+      });
+  });
+
+  test("should handle reaching the last page", () => {
+    const articleId = 3;
+    const limit = 5;
+    const lastPage = 1;
+
+    return request(app)
+      .get(`/api/articles/${articleId}/comments?limit=${limit}&p=${lastPage}`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments.length).toBe(2);
+      });
+  });
+
+  test("should handle reaching the last page", () => {
+    const articleId = 3;
+    const limit = 5;
+    const p = 2;
+
+    return request(app)
+      .get(`/api/articles/${articleId}/comments?limit=${limit}&p=${p}`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments.length).toBe(0);
+        expect(body.comments).toEqual([]);
       });
   });
 });

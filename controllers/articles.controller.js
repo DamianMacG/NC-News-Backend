@@ -32,16 +32,12 @@ exports.getArticles = (req, res, next) => {
 exports.getArticleIdComments = (req, res, next) => {
   const { article_id } = req.params;
   const { limit = 5, p = 1 } = req.query;
-  const offset = limit * p - limit;
+    const offset = (p - 1) * limit;
 
   const promises = [
     getAllArticleIdComments(article_id, limit, offset),
     getArticlesById(article_id),
   ];
-
-  if (article_id) {
-    promises.push(getArticlesById(article_id));
-  }
 
   Promise.all(promises)
     .then((resolvedPromises) => {

@@ -69,7 +69,7 @@ exports.getAllArticleIdComments = (article_id, limit, offset) => {
       [article_id, limit, offset]
     )
     .then((result) => {
-      if (result.rows.some((comment) => comment.article_id === article_id)) {
+      if (result.rows.some((comment) => comment.article_id === article_id) && result.rows.length === 0) {
         return [];
       }
       return result.rows;
