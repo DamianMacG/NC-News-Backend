@@ -59,17 +59,17 @@ exports.getAllArticles = (topic, sort_by = "created_at", order_by = "DESC") => {
   });
 };
 
-exports.getAllArticleIdComments = (article_id) => {
+exports.getAllArticleIdComments = (article_id, limit, offset) => {
   return db
     .query(
       `SELECT * FROM comments
-    WHERE article_id = $1
-    ORDER BY created_at DESC
-    `,
-      [article_id]
+       WHERE article_id = $1
+       ORDER BY created_at DESC
+       LIMIT $2 OFFSET $3`,
+      [article_id, limit, offset]
     )
     .then((result) => {
-      if (result.rows.includes(article_id)) {
+      if (result.rows.some((comment) => comment.article_id === article_id)) {
         return [];
       }
       return result.rows;

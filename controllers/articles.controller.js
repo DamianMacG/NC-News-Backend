@@ -31,19 +31,26 @@ exports.getArticles = (req, res, next) => {
 
 exports.getArticleIdComments = (req, res, next) => {
   const { article_id } = req.params;
+  const { limit = 5, p = 1 } = req.query;
+  const offset = limit * p - limit;
 
-  const promises = [getAllArticleIdComments(article_id)];
+  const promises = [
+    getAllArticleIdComments(article_id, limit, offset),
+    getArticlesById(article_id),
+  ];
+
   if (article_id) {
     promises.push(getArticlesById(article_id));
   }
+
   Promise.all(promises)
     .then((resolvedPromises) => {
       const comments = resolvedPromises[0];
-      res.status(200).send({ comments });
+      const article = resolvedPromises[1];
+      res.status(200).send({ comments, article });
     })
     .catch(next);
 };
-
 exports.postComment = (req, res, next) => {
   const { article_id } = req.params;
   const { username, body } = req.body;
