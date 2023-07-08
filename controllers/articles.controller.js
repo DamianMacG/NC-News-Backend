@@ -20,19 +20,25 @@ exports.getArticleById = (req, res, next) => {
 };
 
 exports.getArticles = (req, res, next) => {
-  const topic = req.query.topic;
-  const sort_by = req.query.sort_by;
-  const order_by = req.query.order_by;
+  const { topic, sort_by, order_by, limit = 10, p = 1 } = req.query;
+  const offset = (p - 1) * limit;
 
-  getAllArticles(topic, sort_by, order_by)
-    .then((articles) => res.status(200).send({ articles }))
+  const pageNumber = parseInt(p);
+  if (isNaN(pageNumber) || pageNumber < 1) {
+    return res.status(400).json({ msg: "Bad request" });
+  }
+
+  getAllArticles(topic, sort_by, order_by, limit, offset)
+    .then((articles) => {
+      res.status(200).send({ articles });
+    })
     .catch(next);
 };
 
 exports.getArticleIdComments = (req, res, next) => {
   const { article_id } = req.params;
   const { limit = 5, p = 1 } = req.query;
-    const offset = (p - 1) * limit;
+  const offset = (p - 1) * limit;
 
   const promises = [
     getAllArticleIdComments(article_id, limit, offset),

@@ -129,7 +129,7 @@ describe("GET /api/articles", () => {
       .get("/api/articles")
       .expect(200)
       .then(({ body }) => {
-        expect(body.articles.length).toBe(13);
+        expect(body.articles.length).toBeGreaterThan(1);
         expect(typeof body).toBe("object");
         expect(Array.isArray(body.articles)).toBe(true);
         body.articles.forEach((article) =>
@@ -144,16 +144,16 @@ describe("GET /api/articles", () => {
             comment_count: expect.any(Number),
           })
         );
-        expect(body.articles[12]).toEqual({
-          article_id: 7,
-          title: "Z",
+        expect(body.articles[0]).toEqual({
+          article_id: 3,
+          title: "Eight pug gifs that remind me of mitch",
           author: "icellusedkars",
           topic: "mitch",
-          created_at: "2020-01-07T14:08:00.000Z",
+          created_at: "2020-11-03T09:12:00.000Z",
           votes: 0,
           article_img_url:
             "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
-          comment_count: 0,
+          comment_count: 2,
         });
       });
   });
@@ -198,7 +198,7 @@ describe("GET /api/articles", () => {
       .expect(200)
       .then(({ body }) => {
         expect(Array.isArray(body.articles)).toBe(true);
-        expect(body.articles.length).toBe(13);
+        expect(body.articles.length).toBeGreaterThan(1);
         expect(body.articles[0]).toMatchObject({
           article_id: 12,
           title: "Moustache",
@@ -218,7 +218,7 @@ describe("GET /api/articles", () => {
       .expect(200)
       .then(({ body }) => {
         expect(Array.isArray(body.articles)).toBe(true);
-        expect(body.articles.length).toBe(13);
+        expect(body.articles.length).toBeGreaterThan(1);
         expect(body.articles[0]).toMatchObject({
           article_id: 7,
           title: "Z",
@@ -238,7 +238,7 @@ describe("GET /api/articles", () => {
       .expect(200)
       .then(({ body }) => {
         expect(Array.isArray(body.articles)).toBe(true);
-        expect(body.articles.length).toBe(13);
+        expect(body.articles.length).toBeGreaterThan(1);
         expect(body.articles[0]).toMatchObject({
           article_id: 3,
           title: "Eight pug gifs that remind me of mitch",
@@ -275,6 +275,93 @@ describe("GET /api/articles", () => {
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("Topic not found");
+      });
+  });
+  test("200 should return the first page of articles with the default limit 10", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        expect(Array.isArray(body.articles)).toBe(true);
+        expect(body.articles.length).toBe(10);
+      });
+  });
+
+  test("200 should return the specified page of articles with the default limit", () => {
+    return request(app)
+      .get("/api/articles?p=1")
+      .expect(200)
+      .then(({ body }) => {
+        expect(Array.isArray(body.articles)).toBe(true);
+        expect(body.articles.length).toBe(10);
+        expect(body.articles[9]).toEqual( {
+          article_id: 4,
+          title: "Student SUES Mitch!",
+          author: "rogersop",
+          topic: "mitch",
+          created_at: "2020-05-06T01:14:00.000Z",
+          votes: 0,
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+          comment_count: 0,
+        });
+      });
+  });
+
+  test("200 should return an empty array of articles for out-of-range page", () => {
+    return request(app)
+      .get("/api/articles?p=100")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles.length).toBe(0);
+        expect(body.articles).toEqual([]);
+      });
+  });
+
+  test("200 should return the specified number of articles according to custom limit", () => {
+    return request(app)
+      .get("/api/articles?limit=8")
+      .expect(200)
+      .then(({ body }) => {
+        expect(Array.isArray(body.articles)).toBe(true);
+        expect(body.articles.length).toBe(8);
+      });
+  });
+
+  test("200 should return the correct subset of articles based on page and limit", () => {
+    return request(app)
+      .get("/api/articles?limit=3&p=2")
+      .expect(200)
+      .then(({ body }) => {
+        expect(Array.isArray(body.articles)).toBe(true);
+        expect(body.articles.length).toBe(3);
+      });
+  });
+  test("200 should return the correct subset of articles based on page and limit", () => {
+    return request(app)
+      .get("/api/articles?limit=5&p=1")
+      .expect(200)
+      .then(({ body }) => {
+        expect(Array.isArray(body.articles)).toBe(true);
+        expect(body.articles.length).toBe(5);
+      });
+  });
+
+  test("GET should return 400 Bad Request when an invalid limit value is provided", () => {
+    return request(app)
+      .get("/api/articles?limit=abc")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "Bad request" });
+      });
+  });
+
+  test("GET should return 400 Bad Request when an invalid p value is provided", () => {
+    return request(app)
+      .get("/api/articles?p=abc")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "Bad request" });
       });
   });
 });
@@ -422,7 +509,7 @@ describe("GET /api/articles/:article_id/comments", () => {
         expect(body.comments.length).toBe(1);
       });
   });
-  test("should handle reaching the last page", () => {
+  test("should handle reaching past the last page", () => {
     const articleId = 1;
     const limit = 5;
     const p = 4;
@@ -449,7 +536,7 @@ describe("GET /api/articles/:article_id/comments", () => {
       });
   });
 
-  test("should handle reaching the last page", () => {
+  test("should handle reaching past the last page", () => {
     const articleId = 3;
     const limit = 5;
     const p = 2;

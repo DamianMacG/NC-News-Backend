@@ -23,12 +23,14 @@
     }
   },
   "GET /api/articles": {
-    "description": "serves an array of all articles",
+    "description": "serves an array of articles with a selection query parameters if desired",
     "queries": ["author", "topic", "sort_by", "order"],
     "exampleRequest": {
       "topic": "cats",
       "sort_by": "created_at",
-      "order_by": "DESC"
+      "order_by": "DESC",
+      "limit": 3,
+      "p": 2
     },
     "exampleResponse": {
       "articles": [
@@ -43,24 +45,24 @@
           "comment_count": 2
         },
         {
-          "article_id": 5,
-          "title": "UNCOVERED: catspiracy to bring down democracy",
-          "author": "rogersop",
+          "article_id": 7,
+          "title": "The Secret Life of Cats",
+          "author": "kittylover",
           "topic": "cats",
-          "created_at": "2022-08-03T13:14:00.000Z",
-          "votes": 0,
-          "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
-          "comment_count": 2
+          "created_at": "2022-10-12T08:30:00.000Z",
+          "votes": 10,
+          "article_img_url": "https://images.pexels.com/photos/123456/cat-secret-life.jpg?w=700&h=700",
+          "comment_count": 5
         },
         {
-          "article_id": 5,
-          "title": "UNCOVERED: catspiracy to bring down democracy",
-          "author": "rogersop",
+          "article_id": 9,
+          "title": "The Curious Case of Mr. Whiskers",
+          "author": "meowmaster",
           "topic": "cats",
-          "created_at": "2021-08-03T13:14:00.000Z",
-          "votes": 0,
-          "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
-          "comment_count": 2
+          "created_at": "2021-05-20T16:45:00.000Z",
+          "votes": 5,
+          "article_img_url": "https://images.pexels.com/photos/987654/mr-whiskers-curious-cat.jpg?w=700&h=700",
+          "comment_count": 3
         }
       ]
     }
@@ -106,7 +108,7 @@
     }
   },
   "GET /api/articles/:article_id/comments": {
-    "description": "get comments for an article with pagination",
+    "description": "get comments for an article with pagination queries if desired",
     "queries": ["limit", "p"],
     "exampleRequest": {
       "limit": 3,

@@ -18,7 +18,13 @@ exports.getArticlesById = (article_id) => {
     });
 };
 
-exports.getAllArticles = (topic, sort_by = "created_at", order_by = "DESC") => {
+exports.getAllArticles = (
+  topic,
+  sort_by = "created_at",
+  order_by = "DESC",
+  limit,
+  offset
+) => {
   const validSorts = [
     "article_id",
     "title",
@@ -52,7 +58,14 @@ exports.getAllArticles = (topic, sort_by = "created_at", order_by = "DESC") => {
   }
 
   queryString += ` GROUP BY articles.article_id, articles.title, articles.author, articles.topic, articles.created_at, articles.votes, articles.article_img_url`;
-  queryString += ` ORDER BY ${sort_by} ${order_by};`;
+  queryString += ` ORDER BY ${sort_by} ${order_by}`;
+
+  if (limit) {
+    queryString += ` LIMIT ${limit}`;
+    if (offset) {
+      queryString += ` OFFSET ${offset}`;
+    }
+  }
 
   return db.query(queryString, queryValues).then(({ rows }) => {
     return rows;
@@ -69,7 +82,10 @@ exports.getAllArticleIdComments = (article_id, limit, offset) => {
       [article_id, limit, offset]
     )
     .then((result) => {
-      if (result.rows.some((comment) => comment.article_id === article_id) && result.rows.length === 0) {
+      if (
+        result.rows.some((comment) => comment.article_id === article_id) &&
+        result.rows.length === 0
+      ) {
         return [];
       }
       return result.rows;
