@@ -5,12 +5,16 @@ const apiRouter = require("./routers/apiRouter");
 const articlesRouter = require("./routers/articlesRouter");
 const usersRouter = require("./routers/usersRouter");
 const commentsRouter = require("./routers/commentsRouter");
+const cors = require("cors")
 
 const {
   handleCustomErrors,
   handleServerErrors,
   handlePsqlErrors,
 } = require("./errors/errors");
+
+
+app.use(cors());
 
 app.use(express.json());
 
